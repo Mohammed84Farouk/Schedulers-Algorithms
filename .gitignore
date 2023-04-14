@@ -1,0 +1,56 @@
+# Compiled class file
+*.class
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+project/
+build/
+target/
+.gradle/
+.gradle-cache/
+.gradle.kts/
+buildSrc/.gradle/
+buildSrc/.gradle-cache/
+buildSrc/build/
+buildSrc/out/
+*.log
+
+# Eclipse
+*.project
+*.classpath
+.settings/
+.metadata/
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*.nfs*
+.apt_generated/
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*.nfs*
+.settings/
+.remote/
+.caches/
+.server/
+.project
+.classpath
+.factorypath
+.springBeans
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
