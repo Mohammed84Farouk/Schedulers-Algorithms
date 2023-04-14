@@ -1,4 +1,4 @@
-package com.example;
+package com.schedulers_algorithms;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -11,12 +11,12 @@ import javafx.geometry.Pos;
 
 import java.io.IOException;
 
-import com.example.Icons.AddProcessButtonIcon;
-import com.example.Icons.ButtonIcon;
-import com.example.Icons.ContinueButtonIcon;
-import com.example.Icons.PauseButtonIcon;
-import com.example.Icons.StartButtonIcon;
-import com.example.Icons.StopButtonIcon;
+import com.schedulers_algorithms.Icons.AddProcessButtonIcon;
+import com.schedulers_algorithms.Icons.ButtonIcon;
+import com.schedulers_algorithms.Icons.ContinueButtonIcon;
+import com.schedulers_algorithms.Icons.PauseButtonIcon;
+import com.schedulers_algorithms.Icons.StartButtonIcon;
+import com.schedulers_algorithms.Icons.StopButtonIcon;
 
 /**
  * JavaFX App

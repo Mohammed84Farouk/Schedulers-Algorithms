@@ -1,4 +1,4 @@
-package com.example.Icons;
+package com.schedulers_algorithms.Icons;
 
 import javafx.scene.control.Button;
 

@@ -18,6 +18,7 @@ buildSrc/.gradle-cache/
 buildSrc/build/
 buildSrc/out/
 *.log
+/.vscode/*
 
 # Eclipse
 *.project

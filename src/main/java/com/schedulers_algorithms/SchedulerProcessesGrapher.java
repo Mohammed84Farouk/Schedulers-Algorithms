@@ -1,4 +1,4 @@
-package com.example;
+package com.schedulers_algorithms;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
