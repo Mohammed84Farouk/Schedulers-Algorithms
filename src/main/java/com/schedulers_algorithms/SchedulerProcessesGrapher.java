@@ -15,6 +15,8 @@ public class SchedulerProcessesGrapher extends Pane {
         
         getChildren().add(schedulerProcessesGrapherCanvas);
 
+        // TODO
+
         layout.getChildren().add(this);
 
         schedulerProcessesGrapherCanvas = null;
