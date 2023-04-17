@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Pos;
@@ -14,6 +15,21 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.collections.FXCollections;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+
+import com.schedulers_algorithms.Utils.Process;
+import com.schedulers_algorithms.Utils.ProcessColor;
+import com.schedulers_algorithms.Add_Process_Dialog.AddProcessDialog;
+import com.schedulers_algorithms.Dropdown_Button.DropdownButton;
+import com.schedulers_algorithms.GanttChart.GanttChart;
+import com.schedulers_algorithms.ProcessDetailsTable.ProcessDetailsTable;
+import com.schedulers_algorithms.Timer.Timer;
+
+import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
+import javafx.scene.control.ScrollPane;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -21,6 +37,7 @@ import javafx.animation.Timeline;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import javafx.event.ActionEvent;
 
 import com.schedulers_algorithms.Icons.AddProcessButtonIcon;
 import com.schedulers_algorithms.Icons.ButtonIcon;
@@ -28,24 +45,46 @@ import com.schedulers_algorithms.Icons.ContinueButtonIcon;
 import com.schedulers_algorithms.Icons.PauseButtonIcon;
 import com.schedulers_algorithms.Icons.StartButtonIcon;
 import com.schedulers_algorithms.Icons.StopButtonIcon;
+import com.schedulers_algorithms.Preemptive_Priority.PreemptivePriority;
 
 /**
  * JavaFX App
  */
 public class App extends Application {
 
+    final String TITLE = "CPU Processes Scheduler";
+
+    public enum SchedulerAlgorithm {
+        NONE,
+        FCFS,
+        NON_PREEMPTIVE_PRIORITY,
+        PREEMPTIVE_PRIORITY,
+        NON_PREEMPTIVE_SJF,
+        PREEMPTIVE_SJF,
+        RR
+    }
+
+    public enum SchedulerState {
+        INITIALIZATION,
+        RUNNING,
+        PAUSED,
+        INVALID
+    }
+
+    private SchedulerState currentSchedulerState = SchedulerState.INVALID;
+
+    /*
+     * 
+     * This variable keeps adding 1 each second.
+     * 
+     */
+    private int accumulativeSeconds = 0;
+
     private static Scene scene;
 
-    TableView<String[]> table = new TableView<>();
-    ObservableList<String[]> data = FXCollections.observableArrayList(
-            new String[] { "John", "Doe", "30" },
-            new String[] { "Jane", "Smith", "25" });
+    PreemptivePriority preemptivePriority = new PreemptivePriority();
 
-    Timeline timeline = new Timeline(
-            new KeyFrame(Duration.millis(500), event -> {
-                // Perform timer operations here
-                data.add(new String[] { "farouk", "saif", "33" });
-            }));
+    Timer timer = new Timer("00:00:00");
 
     private Button startButton = new Button();
     private ButtonIcon startButtonIcon = new StartButtonIcon();
@@ -62,10 +101,75 @@ public class App extends Application {
     private Button addProcessButton = new Button();
     private ButtonIcon addProcessButtonIcon = new AddProcessButtonIcon();
 
+    private DropdownButton dropdownButton = new DropdownButton();
+
+    private ProcessDetailsTable processDetailsTable = new ProcessDetailsTable();
+
+    GanttChart ganttChart = new GanttChart();
+
+    Timeline timeline = new Timeline(
+            new KeyFrame(Duration.seconds(1), this::handleTimelimeEvent));
+
+    private void handleTimelimeEvent(ActionEvent event) {
+        Process currentProcess = preemptivePriority.getCurrentProcess();
+        
+        if (currentProcess != null) {
+            Rectangle rectangle = new Rectangle(50, 50);
+            rectangle.setFill(currentProcess.getColor());
+            Label label = new Label(currentProcess.getId());
+            StackPane stackPane = new StackPane();
+            stackPane.getChildren().addAll(rectangle, label);
+            ganttChart.getChildren().add(stackPane);
+        }
+
+        preemptivePriority.runProcess();
+
+        accumulativeSeconds++;
+        String hoursStr = String.format("%02d", (accumulativeSeconds / 3600));
+        String minutesStr = String.format("%02d", ((accumulativeSeconds / 60) % 60));
+        String secondsStr = String.format("%02d", (accumulativeSeconds % 60));
+
+        timer.setText(hoursStr+':'+minutesStr+':'+secondsStr);
+    }
+
+    private void updateLook() {
+        switch (currentSchedulerState) {
+            case INITIALIZATION:
+                startButton.setDisable(false);
+                stopButton.setDisable(true);
+                pauseButton.setDisable(true);
+                continueButton.setDisable(true);
+                addProcessButton.setDisable(false);
+                break;
+            case PAUSED:
+                startButton.setDisable(true);
+                stopButton.setDisable(false);
+                pauseButton.setDisable(true);
+                continueButton.setDisable(false);
+                addProcessButton.setDisable(false);
+                break;
+            case RUNNING:
+                startButton.setDisable(true);
+                stopButton.setDisable(false);
+                pauseButton.setDisable(false);
+                continueButton.setDisable(true);
+                addProcessButton.setDisable(false);
+                break;
+            case INVALID:
+                startButton.setDisable(true);
+                stopButton.setDisable(true);
+                pauseButton.setDisable(true);
+                continueButton.setDisable(true);
+                addProcessButton.setDisable(true);
+                break;
+            default:
+                break;
+        }
+    }
+
     private void handleStartButtonPress(MouseEvent event) {
-        startButton.setDisable(true);
-        stopButton.setDisable(false);
-        pauseButton.setDisable(false);
+        currentSchedulerState = SchedulerState.RUNNING;
+        updateLook();
 
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
@@ -74,75 +178,108 @@ public class App extends Application {
     }
 
     private void handleStopButtonPress(MouseEvent event) {
-        startButton.setDisable(false);
-        stopButton.setDisable(true);
-        pauseButton.setDisable(true);
-        continueButton.setDisable(true);
+        currentSchedulerState = SchedulerState.INITIALIZATION;
+        updateLook();
+
+        timeline.stop();
 
         // TODO
     }
 
     private void handlePauseButtonPress(MouseEvent event) {
-        pauseButton.setDisable(true);
-        continueButton.setDisable(false);
+        currentSchedulerState = SchedulerState.PAUSED;
+        updateLook();
+
+        timeline.pause();
 
         // TODO
     }
 
     private void handleContinueButtonPress(MouseEvent event) {
-        pauseButton.setDisable(false);
-        continueButton.setDisable(true);
+        currentSchedulerState = SchedulerState.RUNNING;
+        updateLook();
+
+        timeline.play();
 
         // TODO
     }
 
     private void handleAddProcessButtonPress(MouseEvent event) {
+        if (currentSchedulerState == SchedulerState.RUNNING) timeline.pause();
 
-        // data.add(new String[] { "John", "Doe", "30" });
+        StringBuilder processId = new StringBuilder();
+        StringBuilder processPriority = new StringBuilder();
+        StringBuilder processBurst = new StringBuilder();
+        ProcessColor processColor = new ProcessColor(Color.RED);
+        AddProcessDialog addProcessDialog = new AddProcessDialog(processId, processPriority, processBurst, processColor);
+        addProcessDialog.showDialog();
 
-        // ObservableList<String[]> data = table.getItems();
+        Process process = new Process(
+            processId.toString(), 
+            accumulativeSeconds,
+            Integer.parseInt(processBurst.toString()),
+            Integer.parseInt(processPriority.toString()),
+            processColor.getColor());
 
-        // String[] newRow = new String[] { "farouk", "Jones", "22" };
+        processDetailsTable.addProcess(SchedulerAlgorithm.PREEMPTIVE_PRIORITY, process);
 
-        // int lastIndex = data.size() - 1;
-        // String[] lastRow = data.get(lastIndex);
-        // lastRow[0] = newRow[0];
-        // lastRow[1] = newRow[1];
-        // lastRow[2] = newRow[2];
+        preemptivePriority.addProcessToReadyQueue(process);
 
-        // data.add(newRow);
-        // table.refresh();
+        if (currentSchedulerState == SchedulerState.RUNNING) timeline.play();
+    }
 
-        // TODO
+    private void dropdownOnAction(ActionEvent event) {
+        ComboBox<SchedulerAlgorithm> source = (ComboBox<SchedulerAlgorithm>) event.getSource();
+        SchedulerAlgorithm selectedValue = source.getSelectionModel().getSelectedItem();
+        switch (selectedValue) {
+            case NONE:
+                currentSchedulerState = SchedulerState.INVALID;
+                updateLook();
+                processDetailsTable.switchAlgorithm(SchedulerAlgorithm.NONE);
+                break;
+            case FCFS:
+                break;
+            case NON_PREEMPTIVE_PRIORITY:
+                break;
+            case NON_PREEMPTIVE_SJF:
+                break;
+            case PREEMPTIVE_PRIORITY:
+                currentSchedulerState = SchedulerState.INITIALIZATION;
+                updateLook();
+                processDetailsTable.switchAlgorithm(SchedulerAlgorithm.PREEMPTIVE_PRIORITY);
+                break;
+            case PREEMPTIVE_SJF:
+                break;
+            case RR:
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
     public void start(Stage stage) throws IOException {
         VBox mainLayout = new VBox();
+        mainLayout.setSpacing(10);
+
+        timer.place(mainLayout);
+
+        updateLook();
 
         startButtonIcon.paint(startButton);
         startButton.setOnMousePressed(this::handleStartButtonPress);
 
-        stopButton.setDisable(true);
         stopButtonIcon.paint(stopButton);
         stopButton.setOnMousePressed(this::handleStopButtonPress);
 
-        pauseButton.setDisable(true);
         pauseButtonIcon.paint(pauseButton);
         pauseButton.setOnMousePressed(this::handlePauseButtonPress);
 
-        continueButton.setDisable(true);
         continueButtonIcon.paint(continueButton);
         continueButton.setOnMousePressed(this::handleContinueButtonPress);
 
-        // addProcessButton.setDisable(true);
         addProcessButtonIcon.paint(addProcessButton);
         addProcessButton.setOnMousePressed(this::handleAddProcessButtonPress);
-
-        HBox.setMargin(startButton, new javafx.geometry.Insets(10, 5, 10, 10));
-        HBox.setMargin(stopButton, new javafx.geometry.Insets(10, 10, 10, 5));
-        HBox.setMargin(pauseButton, new javafx.geometry.Insets(10, 5, 10, 5));
-        HBox.setMargin(continueButton, new javafx.geometry.Insets(10, 10, 10, 5));
 
         HBox schedulersControllers = new HBox();
 
@@ -151,31 +288,22 @@ public class App extends Application {
         schedulersControllers.getChildren().addAll(startButton, stopButton, pauseButton, continueButton,
                 addProcessButton);
 
-        mainLayout.getChildren().addAll(schedulersControllers);
+        schedulersControllers.setSpacing(10);
 
-        ////
+        mainLayout.getChildren().add(schedulersControllers);
 
-        TableColumn<String[], String> firstNameCol = new TableColumn<>("First Name");
-        firstNameCol.setCellValueFactory(param -> new SimpleStringProperty(param.getValue()[0]));
+        dropdownButton.setOnAction(this::dropdownOnAction);
+        dropdownButton.place(mainLayout);
 
-        TableColumn<String[], String> lastNameCol = new TableColumn<>("Last Name");
-        lastNameCol.setCellValueFactory(param -> new SimpleStringProperty(param.getValue()[1]));
+        processDetailsTable.place(mainLayout);
 
-        TableColumn<String[], String> ageCol = new TableColumn<>("Age");
-        ageCol.setCellValueFactory(param -> new SimpleStringProperty(param.getValue()[2]));
+        ganttChart.place(mainLayout);
 
-        table.setItems(data);
-        table.getColumns().addAll(firstNameCol, lastNameCol, ageCol);
-
-        mainLayout.getChildren().add(table);
-
-        ////
-
-        SchedulerProcessesGrapher schedulerProcessesGrapher = new SchedulerProcessesGrapher();
-        schedulerProcessesGrapher.paint(mainLayout);
+        mainLayout.setAlignment(Pos.CENTER);
 
         scene = new Scene(mainLayout, 640, 480);
         stage.setScene(scene);
+        stage.setTitle(TITLE);
         stage.show();
     }
 
