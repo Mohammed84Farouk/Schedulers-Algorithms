@@ -111,7 +111,7 @@ public class App extends Application {
             new KeyFrame(Duration.seconds(1), this::handleTimelimeEvent));
 
     private void handleTimelimeEvent(ActionEvent event) {
-        Process currentProcess = preemptivePriority.getCurrentProcess();
+        Process currentProcess = preemptivePriority.getCPUHookedProcess();
         
         if (currentProcess != null) {
             Rectangle rectangle = new Rectangle(50, 50);
@@ -120,6 +120,7 @@ public class App extends Application {
             StackPane stackPane = new StackPane();
             stackPane.getChildren().addAll(rectangle, label);
             ganttChart.getChildren().add(stackPane);
+            ganttChart.adjustView(); // TODO fix here
         }
 
         preemptivePriority.runProcess();

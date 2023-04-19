@@ -8,10 +8,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class GanttChart extends HBox {
+
+    private ScrollPane scrollPane = new ScrollPane();
+
     public void place(Pane layout) {
         setSpacing(5);
 
-        ScrollPane scrollPane = new ScrollPane();
         scrollPane.setPrefHeight(200);
         VBox.setMargin(scrollPane, new javafx.geometry.Insets(0, 50, 20, 50));
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -19,6 +21,10 @@ public class GanttChart extends HBox {
         scrollPane.setContent(this);
 
         layout.getChildren().add(scrollPane);
+    }
+
+    public void adjustView() {
+        scrollPane.setHvalue(1.0);
     }
     
 }
