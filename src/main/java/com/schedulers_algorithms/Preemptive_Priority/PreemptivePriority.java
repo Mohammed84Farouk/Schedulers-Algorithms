@@ -57,8 +57,12 @@ public class PreemptivePriority {
         return cpu.getHookedProcess();
     }
 
+    public boolean isCPUBuzy() {
+        return cpu.isBuzy();
+    }
+
     public void runProcess() {
-        if (cpu.getHookedProcess() == null) {
+        if (cpu.getState() == CPUState.IDLE) {
             if (!hookProcessOnCPUFromReadyQueue())
                 return;
         }
@@ -67,6 +71,7 @@ public class PreemptivePriority {
         cpu.getHookedProcess().setBurstTime(hookedProcessBurstTime - 1);
 
         if ((hookedProcessBurstTime - 1) == 0) {
+            cpu.switchState(CPUState.IDLE);
             cpu.unHookProcess();
             hookProcessOnCPUFromReadyQueue();
         }
@@ -87,6 +92,7 @@ public class PreemptivePriority {
 
         if (highestPriorityProcessIndex != Integer.MAX_VALUE) {
             cpu.hookProcess(readyQueue.elementAt(highestPriorityProcessIndex));
+            cpu.switchState(CPUState.BUZY);
             readyQueue.removeElementAt(highestPriorityProcessIndex);
         }
 

@@ -111,15 +111,14 @@ public class App extends Application {
             new KeyFrame(Duration.seconds(1), this::handleTimelimeEvent));
 
     private void handleTimelimeEvent(ActionEvent event) {
-        Process currentProcess = preemptivePriority.getCPUHookedProcess();
-        
-        if (currentProcess != null) {
+        if (preemptivePriority.isCPUBuzy()) {
             Rectangle rectangle = new Rectangle(50, 50);
-            rectangle.setFill(currentProcess.getColor());
-            Label label = new Label(currentProcess.getId());
+            rectangle.setFill(preemptivePriority.getCPUHookedProcess().getColor());
+            Label label = new Label(preemptivePriority.getCPUHookedProcess().getId());
             StackPane stackPane = new StackPane();
             stackPane.getChildren().addAll(rectangle, label);
             ganttChart.getChildren().add(stackPane);
+
             ganttChart.adjustView(); // TODO fix here
         }
 

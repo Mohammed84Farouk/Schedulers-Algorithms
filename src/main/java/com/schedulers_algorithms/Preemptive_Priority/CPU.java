@@ -35,4 +35,8 @@ public class CPU {
     public int getHookedProcessPriority() {
         return this.hookedProcess.getPriority();
     }
+
+    public boolean isBuzy() {
+        return (state == CPUState.BUZY);
+    }
 }
