@@ -11,6 +11,7 @@ public class Process {
     private int waitingTime;
     private int turnAroundTime;
     private int lastQueue;
+	private Color color;
 
     public Process(int id, int arrivalTime, int burstTime, int priority, Color color) {
         this.id = id;
@@ -18,6 +19,7 @@ public class Process {
         this.burstTime = burstTime;
         this.priority = priority;
         this.lastQueue = 1;
+		this.color = color;
     }
 
     public int getId() {

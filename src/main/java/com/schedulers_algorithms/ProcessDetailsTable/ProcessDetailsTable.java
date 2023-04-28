@@ -23,10 +23,10 @@ public class ProcessDetailsTable extends TableView<String[]> {
     private ObservableList<String[]> data = FXCollections.observableArrayList();
 
     public void switchAlgorithm(SchedulerAlgorithm algorithm) {
-        switch(algorithm) {
+        switch (algorithm) {
             case NONE:
-            resetTable();
-            break;
+                resetTable();
+                break;
             case FCFS:
                 break;
             case NON_PREEMPTIVE_PRIORITY:
@@ -104,8 +104,8 @@ public class ProcessDetailsTable extends TableView<String[]> {
         getColumns().addAll(columns);
     }
 
-    public void addProcess(SchedulerAlgorithm algorithm ,Process process) {
-        switch(algorithm) {
+    public void addProcess(SchedulerAlgorithm algorithm, Process process) {
+        switch (algorithm) {
             case NONE:
                 break;
             case FCFS:
@@ -115,7 +115,11 @@ public class ProcessDetailsTable extends TableView<String[]> {
             case NON_PREEMPTIVE_SJF:
                 break;
             case PREEMPTIVE_PRIORITY:
-                data.add(new String[] {process.getId(), String.valueOf(process.getArrivalTime()), String.valueOf(process.getBurstTime()), String.valueOf(process.getPriority())});
+                data.add(new String[] {
+                    "P"+Integer.toString(process.getId()),
+                        String.valueOf(process.getArrivalTime()),
+                        String.valueOf(process.getBurstTime()),
+                        String.valueOf(process.getPriority()) });
                 break;
             case PREEMPTIVE_SJF:
                 break;

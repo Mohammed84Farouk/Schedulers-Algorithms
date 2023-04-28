@@ -18,18 +18,15 @@ import com.schedulers_algorithms.Utils.Process;
 import com.schedulers_algorithms.Utils.ProcessColor;
 
 public class AddProcessDialog extends Stage {
-    private TextField processIdField = new TextField();
     private TextField processPriorityField = new TextField();
     private TextField processBurstField = new TextField();
     private ColorPicker processColorPicker = new ColorPicker(Color.RED);
 
-    StringBuilder processId;
     StringBuilder processPriority;
     StringBuilder processBurst;
     ProcessColor processColor;
 
-    public AddProcessDialog(StringBuilder processId, StringBuilder processPriority, StringBuilder processBurst, ProcessColor processColor) {
-        this.processId = processId;
+    public AddProcessDialog(StringBuilder processPriority, StringBuilder processBurst, ProcessColor processColor) {
         this.processPriority = processPriority;
         this.processBurst = processBurst;
         this.processColor = processColor;
@@ -37,7 +34,6 @@ public class AddProcessDialog extends Stage {
 
     private void handleSaveButtonPress(MouseEvent event) {
 
-        processId.append(processIdField.getText());
         processPriority.append(processPriorityField.getText());
         processBurst.append(processBurstField.getText());
         processColor.setColor(processColorPicker.getValue());
@@ -52,16 +48,9 @@ public class AddProcessDialog extends Stage {
         VBox mainLayout = new VBox();
         mainLayout.setSpacing(10);
 
-        HBox processId = new HBox();
-        processId.setSpacing(20);
-        VBox.setMargin(processId, new javafx.geometry.Insets(10, 10, 0, 10));
-        Label processIdLabel = new Label("Process ID:");
-        processIdLabel.setTextAlignment(TextAlignment.CENTER);
-        processId.getChildren().addAll(processIdLabel, processIdField);
-
         HBox processPriority = new HBox();
         processPriority.setSpacing(20);
-        VBox.setMargin(processPriority, new javafx.geometry.Insets(0, 10, 0, 10));
+        VBox.setMargin(processPriority, new javafx.geometry.Insets(10, 10, 0, 10));
         Label processPriorityLabel = new Label("Process Priority:");
         processPriorityLabel.setTextAlignment(TextAlignment.CENTER);
         processPriority.getChildren().addAll(processPriorityLabel, processPriorityField);
@@ -83,7 +72,7 @@ public class AddProcessDialog extends Stage {
         Button saveButton = new Button("Save");
         saveButton.setOnMousePressed(this::handleSaveButtonPress);
 
-        mainLayout.getChildren().addAll(processId, processPriority, processBurst, processColor, saveButton);
+        mainLayout.getChildren().addAll(processPriority, processBurst, processColor, saveButton);
 
         Scene addProcessDialogScene = new Scene(mainLayout, 320, 240);
 

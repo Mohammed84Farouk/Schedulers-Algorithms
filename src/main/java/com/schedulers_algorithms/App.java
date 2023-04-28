@@ -38,6 +38,7 @@ import javafx.animation.Timeline;
 import javafx.util.Duration;
 
 import java.io.IOException;
+
 import javafx.event.ActionEvent;
 
 import com.schedulers_algorithms.Icons.AddProcessButtonIcon;
@@ -81,6 +82,12 @@ public class App extends Application {
      */
     private static int accumulativeSeconds = 0;
 
+    /*
+     * 
+     * This variable gives id to every added process.
+     */
+    private int processesIdTracker = 0;
+
     private static Scene scene;
 
     AlgorithmType algorithmType;
@@ -123,7 +130,7 @@ public class App extends Application {
         if (algorithmType.isCPUBuzy()) {
             Rectangle rectangle = new Rectangle(50, 50);
             rectangle.setFill(algorithmType.getCPUHookedProcess().getColor());
-            Label label = new Label(algorithmType.getCPUHookedProcess().getId());
+            Label label = new Label("P"+Integer.toString(algorithmType.getCPUHookedProcess().getId()));
             StackPane stackPane = new StackPane();
             stackPane.getChildren().addAll(rectangle, label);
             ganttChart.getChildren().add(stackPane);
@@ -216,15 +223,14 @@ public class App extends Application {
     private void handleAddProcessButtonPress(MouseEvent event) {
         if (currentSchedulerState == SchedulerState.RUNNING) timeline.pause();
 
-        StringBuilder processId = new StringBuilder();
         StringBuilder processPriority = new StringBuilder();
         StringBuilder processBurst = new StringBuilder();
         ProcessColor processColor = new ProcessColor(Color.RED);
-        AddProcessDialog addProcessDialog = new AddProcessDialog(processId, processPriority, processBurst, processColor);
+        AddProcessDialog addProcessDialog = new AddProcessDialog(processPriority, processBurst, processColor);
         addProcessDialog.showDialog();
 
         Process process = new Process(
-            processId.toString(), 
+            processesIdTracker++, 
             accumulativeSeconds,
             Integer.parseInt(processBurst.toString()),
             Integer.parseInt(processPriority.toString()),
