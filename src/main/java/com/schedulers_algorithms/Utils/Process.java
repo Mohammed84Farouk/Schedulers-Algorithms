@@ -4,7 +4,7 @@ import javafx.scene.paint.Color;
 
 public class Process {
 
-	private String id;
+	private int id;
 	private int arrival;
 	private int burst;
 	private int priority;
@@ -12,7 +12,7 @@ public class Process {
 	private int turnAroundTime;
 	private Color color;
 
-	public Process(String id, int arrival, int burst, int priority, Color color) {
+	public Process(int id, int arrival, int burst, int priority, Color color) {
 		this.id = id;
 		this.arrival = arrival;
 		this.burst = burst;
@@ -20,7 +20,7 @@ public class Process {
 		this.color = color;
 	}
 
-	public String getId() {
+	public int getId() {
 		return this.id;
 	}
 
