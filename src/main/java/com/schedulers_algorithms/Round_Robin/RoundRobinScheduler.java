@@ -1,9 +1,12 @@
 package com.schedulers_algorithms.Round_Robin;
-
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class RoundRobinScheduler {
+import com.schedulers_algorithms.AlgorithmType;
+import com.schedulers_algorithms.Utils.Process;
+import javafx.scene.paint.Color;
+
+public class RoundRobinScheduler implements AlgorithmType{
 
     private Queue<Process> queue1;
     private Queue<Process> queue2;
@@ -15,11 +18,10 @@ public class RoundRobinScheduler {
         this.timeQuantum = timeQuantum;
     }
 
-    public void addProcess(Process process) {
+    public void addProcessToReadyQueue(Process process) {
         queue1.add(process);
     }
-
-    public void run() {
+    public void runProcess() {
         int time = 0;
         while (!queue1.isEmpty() || !queue2.isEmpty()) {
             Process currentProcess;
@@ -28,10 +30,12 @@ public class RoundRobinScheduler {
             } else {
                 currentProcess = queue2.poll();
             }
-            int runTime = Math.min(timeQuantum, currentProcess.getRemainingTime());
+            int runTime = Math.min(timeQuantum, currentProcess.getBurstTime());
             time += runTime;
-            currentProcess.run(runTime);
+            currentProcess.runProcess(runTime);
             if (currentProcess.isFinished()) {
+                currentProcess.setTurnAroundTime(time - currentProcess.getArrivalTime());
+                currentProcess.setWaitingTime(currentProcess.getTurnAroundTime() - currentProcess.getBurstTime());
                 System.out.println("Process " + currentProcess.getId() + " finished at time " + time);
             } else {
                 if (currentProcess.getLastQueue() == 1) {
@@ -41,52 +45,40 @@ public class RoundRobinScheduler {
                     currentProcess.setLastQueue(1);
                     queue1.add(currentProcess);
                 }
+                System.out.println("Process " + currentProcess.getId() + " is executing at time " + time);
             }
         }
     }
+    @Override
+    public Process getCPUHookedProcess() {
+        Process currentProcess;
+        if (!queue1.isEmpty()) {
+            currentProcess = queue1.poll();
+        } else {
+            currentProcess = queue2.poll();
+        }
+        return currentProcess;
+    }
 
-    public static void main(String[] args) {
+    @Override
+    public boolean isCPUBuzy() {
+        Process currentProcess;
+        if (!queue1.isEmpty()) {
+            currentProcess = queue1.poll();
+        } else {
+            currentProcess = queue2.poll();
+        }
+        return currentProcess != null;
+    }
+
+    public static void main(String[] args) throws InterruptedException {
         RoundRobinScheduler scheduler = new RoundRobinScheduler(2);
-        scheduler.addProcess(new Process(1, 5));
-        scheduler.addProcess(new Process(2, 3));
-        scheduler.addProcess(new Process(3, 8));
-        scheduler.run();
-    }
-}
-
-class Process {
-
-    private int id;
-    private int remainingTime;
-    private int lastQueue;
-
-    public Process(int id, int executionTime) {
-        this.id = id;
-        this.remainingTime = executionTime;
-        this.lastQueue = 1;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public int getRemainingTime() {
-        return remainingTime;
-    }
-
-    public void run(int time) {
-        remainingTime -= time;
-    }
-
-    public boolean isFinished() {
-        return remainingTime <= 0;
-    }
-
-    public int getLastQueue() {
-        return lastQueue;
-    }
-
-    public void setLastQueue(int lastQueue) {
-        this.lastQueue = lastQueue;
+        Process p1 = new Process(1, 0, 5, 1, Color.RED);
+        Process p2 = new Process(2, 1, 3, 2, Color.GREEN);
+        Process p3 = new Process(3, 2, 8, 3, Color.BLUE);
+        scheduler.addProcessToReadyQueue(p1);
+        scheduler.addProcessToReadyQueue(p2);
+        scheduler.addProcessToReadyQueue(p3);
+        scheduler.runProcess();
     }
 }
