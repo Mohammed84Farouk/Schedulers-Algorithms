@@ -116,7 +116,7 @@ public class ProcessDetailsTable extends TableView<String[]> {
                 break;
             case PREEMPTIVE_PRIORITY:
                 data.add(new String[] {
-                        Integer.toString(process.getId()),
+                    "P"+Integer.toString(process.getId()),
                         String.valueOf(process.getArrivalTime()),
                         String.valueOf(process.getBurstTime()),
                         String.valueOf(process.getPriority()) });

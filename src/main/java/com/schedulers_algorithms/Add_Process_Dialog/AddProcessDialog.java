@@ -50,7 +50,7 @@ public class AddProcessDialog extends Stage {
 
         HBox processPriority = new HBox();
         processPriority.setSpacing(20);
-        VBox.setMargin(processPriority, new javafx.geometry.Insets(0, 10, 0, 10));
+        VBox.setMargin(processPriority, new javafx.geometry.Insets(10, 10, 0, 10));
         Label processPriorityLabel = new Label("Process Priority:");
         processPriorityLabel.setTextAlignment(TextAlignment.CENTER);
         processPriority.getChildren().addAll(processPriorityLabel, processPriorityField);

@@ -130,7 +130,7 @@ public class App extends Application {
         if (algorithmType.isCPUBuzy()) {
             Rectangle rectangle = new Rectangle(50, 50);
             rectangle.setFill(algorithmType.getCPUHookedProcess().getColor());
-            Label label = new Label("P1"+Integer.toString(algorithmType.getCPUHookedProcess().getId()));
+            Label label = new Label("P"+Integer.toString(algorithmType.getCPUHookedProcess().getId()));
             StackPane stackPane = new StackPane();
             stackPane.getChildren().addAll(rectangle, label);
             ganttChart.getChildren().add(stackPane);
