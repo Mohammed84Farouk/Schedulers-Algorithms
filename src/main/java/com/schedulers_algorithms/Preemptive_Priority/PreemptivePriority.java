@@ -2,6 +2,7 @@ package com.schedulers_algorithms.Preemptive_Priority;
 
 import java.util.Vector;
 
+import com.schedulers_algorithms.AlgorithmType;
 import com.schedulers_algorithms.CPU;
 import com.schedulers_algorithms.CPU.CPUState;
 import com.schedulers_algorithms.Utils.Process;
@@ -11,7 +12,7 @@ import com.schedulers_algorithms.Utils.Process;
  * Range [0 - 7], with 0 as highest priority.
  * 
  */
-public class PreemptivePriority {
+public class PreemptivePriority implements AlgorithmType {
     private CPU cpu;
 
     private Vector<Process> readyQueue;
@@ -21,6 +22,7 @@ public class PreemptivePriority {
         readyQueue = new Vector<Process>();
     }
 
+    @Override
     public void addProcessToReadyQueue(Process process) {
         switch (cpu.getState()) {
             case IDLE:
@@ -54,14 +56,17 @@ public class PreemptivePriority {
         readyQueue.add(process);
     }
 
+    @Override
     public Process getCPUHookedProcess() {
         return cpu.getHookedProcess();
     }
 
+    @Override
     public boolean isCPUBuzy() {
         return cpu.isBuzy();
     }
 
+    @Override
     public void runProcess() {
         if (cpu.getState() == CPUState.IDLE) {
             if (!hookProcessOnCPUFromReadyQueue())

@@ -1,5 +1,6 @@
 package com.schedulers_algorithms;
 
+import com.schedulers_algorithms.Non_Preemptive_SJF.SJFS;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -78,11 +79,12 @@ public class App extends Application {
      * This variable keeps adding 1 each second.
      * 
      */
-    private int accumulativeSeconds = 0;
+    private static int accumulativeSeconds = 0;
 
     private static Scene scene;
 
-    PreemptivePriority preemptivePriority = new PreemptivePriority();
+    AlgorithmType algorithmType;
+
 
     Timer timer = new Timer("00:00:00");
 
@@ -110,15 +112,18 @@ public class App extends Application {
     Timeline timeline = new Timeline(
             new KeyFrame(Duration.seconds(1), this::handleTimelimeEvent));
 
+    public static int getCurrentTime(){
+        return accumulativeSeconds;
+    }
     /*
      * 
      * Timer function.
      */
     private void handleTimelimeEvent(ActionEvent event) {
-        if (preemptivePriority.isCPUBuzy()) {
+        if (algorithmType.isCPUBuzy()) {
             Rectangle rectangle = new Rectangle(50, 50);
-            rectangle.setFill(preemptivePriority.getCPUHookedProcess().getColor());
-            Label label = new Label(preemptivePriority.getCPUHookedProcess().getId());
+            rectangle.setFill(algorithmType.getCPUHookedProcess().getColor());
+            Label label = new Label(algorithmType.getCPUHookedProcess().getId());
             StackPane stackPane = new StackPane();
             stackPane.getChildren().addAll(rectangle, label);
             ganttChart.getChildren().add(stackPane);
@@ -126,7 +131,7 @@ public class App extends Application {
             ganttChart.adjustView(); // TODO fix here
         }
 
-        preemptivePriority.runProcess();
+        algorithmType.runProcess();
 
         accumulativeSeconds++;
         String hoursStr = String.format("%02d", (accumulativeSeconds / 3600));
@@ -227,7 +232,7 @@ public class App extends Application {
 
         processDetailsTable.addProcess(SchedulerAlgorithm.PREEMPTIVE_PRIORITY, process);
 
-        preemptivePriority.addProcessToReadyQueue(process);
+        algorithmType.addProcessToReadyQueue(process);
 
         if (currentSchedulerState == SchedulerState.RUNNING) timeline.play();
     }
@@ -237,6 +242,7 @@ public class App extends Application {
         SchedulerAlgorithm selectedValue = source.getSelectionModel().getSelectedItem();
         switch (selectedValue) {
             case NONE:
+                algorithmType = null;
                 currentSchedulerState = SchedulerState.INVALID;
                 updateLook();
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.NONE);
@@ -246,8 +252,13 @@ public class App extends Application {
             case NON_PREEMPTIVE_PRIORITY:
                 break;
             case NON_PREEMPTIVE_SJF:
+                algorithmType = new SJFS(false);
+                currentSchedulerState = SchedulerState.INITIALIZATION;
+                updateLook();
+                processDetailsTable.switchAlgorithm(SchedulerAlgorithm.NON_PREEMPTIVE_SJF);
                 break;
             case PREEMPTIVE_PRIORITY:
+                algorithmType = new PreemptivePriority();
                 currentSchedulerState = SchedulerState.INITIALIZATION;
                 updateLook();
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.PREEMPTIVE_PRIORITY);

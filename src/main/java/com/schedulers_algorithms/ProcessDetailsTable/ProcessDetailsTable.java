@@ -32,6 +32,8 @@ public class ProcessDetailsTable extends TableView<String[]> {
             case NON_PREEMPTIVE_PRIORITY:
                 break;
             case NON_PREEMPTIVE_SJF:
+                resetTable();
+                setupNonPreemptiveSJF();
                 break;
             case PREEMPTIVE_PRIORITY:
                 resetTable();
@@ -44,6 +46,29 @@ public class ProcessDetailsTable extends TableView<String[]> {
             default:
                 break;
         }
+    }
+
+    private void setupNonPreemptiveSJF() {
+        List<TableColumn<String[], ?>> columns = new ArrayList<>();
+
+        TableColumn<String[], String> processColumn = new TableColumn<>("Process");
+        processColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()[0]));
+        processColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        columns.add(processColumn);
+
+        TableColumn<String[], String> arrivalTimeColumn = new TableColumn<>("Arrival Time");
+        arrivalTimeColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()[1]));
+        arrivalTimeColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        columns.add(arrivalTimeColumn);
+
+        TableColumn<String[], String> burstTimeColumn = new TableColumn<>("Burst Time");
+        burstTimeColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()[2]));
+        burstTimeColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        columns.add(burstTimeColumn);
+
+        setItems(data);
+
+        getColumns().addAll(columns);
     }
 
     private void resetTable() {
