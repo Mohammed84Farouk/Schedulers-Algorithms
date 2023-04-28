@@ -2,7 +2,8 @@ package com.schedulers_algorithms.Preemptive_Priority;
 
 import java.util.Vector;
 
-import com.schedulers_algorithms.Preemptive_Priority.CPU.CPUState;
+import com.schedulers_algorithms.CPU;
+import com.schedulers_algorithms.CPU.CPUState;
 import com.schedulers_algorithms.Utils.Process;
 
 /*

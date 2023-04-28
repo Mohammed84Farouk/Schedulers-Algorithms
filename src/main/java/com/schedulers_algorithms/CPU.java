@@ -1,4 +1,4 @@
-package com.schedulers_algorithms.Preemptive_Priority;
+package com.schedulers_algorithms;
 
 import com.schedulers_algorithms.Utils.Process;
 

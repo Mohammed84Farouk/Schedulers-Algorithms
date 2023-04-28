@@ -110,6 +110,10 @@ public class App extends Application {
     Timeline timeline = new Timeline(
             new KeyFrame(Duration.seconds(1), this::handleTimelimeEvent));
 
+    /*
+     * 
+     * Timer function.
+     */
     private void handleTimelimeEvent(ActionEvent event) {
         if (preemptivePriority.isCPUBuzy()) {
             Rectangle rectangle = new Rectangle(50, 50);
