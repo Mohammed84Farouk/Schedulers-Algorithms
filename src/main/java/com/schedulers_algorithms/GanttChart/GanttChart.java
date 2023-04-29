@@ -22,6 +22,9 @@ public class GanttChart extends HBox {
 
         layout.getChildren().add(scrollPane);
     }
+    public void Clear(){
+        getChildren().clear();
+    }
 
     public void adjustView() {
         scrollPane.setHvalue(1.0);

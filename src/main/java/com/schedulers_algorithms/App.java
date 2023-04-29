@@ -127,26 +127,69 @@ public class App extends Application {
      * 
      * Timer function.
      */
+    int tempX=50, lastProcess=-1, lastTime=0;
+    Color lastColor;
     private void handleTimelimeEvent(ActionEvent event) {
         if (algorithmType.isCPUBuzy()) {
-            Rectangle rectangle = new Rectangle(50, 50);
-            rectangle.setFill(algorithmType.getCPUHookedProcess().getColor());
-            Label label = new Label("P"+Integer.toString(algorithmType.getCPUHookedProcess().getId()));
+            Label label = new Label("P"+lastProcess);
+            if(lastProcess==-1) {
+                lastProcess = algorithmType.getCPUHookedProcess().getId();
+                lastTime = accumulativeSeconds;
+                lastColor = algorithmType.getCPUHookedProcess().getColor();
+            }
+            else if(lastProcess==algorithmType.getCPUHookedProcess().getId()) {
+                tempX += 50;
+//                lastColor=algorithmType.getCPUHookedProcess().getColor();
+            }
+            else {
+                Rectangle rectangle = new Rectangle(tempX, 50);
+                rectangle.setFill(lastColor);
+                HBox hbox = new HBox();
+                hbox.setSpacing(0);                                // spacing between each box carrying the lines and label2
+                Line line = new Line(0, 0, 0, 30);
+                line.setStrokeWidth(1);                            // thickness
+                hbox.getChildren().add(line);
+                Label label2 = new Label(Integer.toString(lastTime));
+                label2.setTranslateY(35);
+                hbox.getChildren().add(label2);
 
+                StackPane stackPane = new StackPane();
+                stackPane.getChildren().addAll(rectangle, label, hbox);
+                ganttChart.getChildren().add(stackPane);
+                tempX = 50;
+                lastProcess = algorithmType.getCPUHookedProcess().getId();
+                lastTime=accumulativeSeconds;
+                lastColor=algorithmType.getCPUHookedProcess().getColor();
+            }
+            lastProcess=algorithmType.getCPUHookedProcess().getId();
+
+            ganttChart.adjustView(); // TODO fix here
+        }
+        else if(lastProcess!=-1){
+            Label label = new Label("P"+lastProcess);
+            Rectangle rectangle = new Rectangle(tempX, 50);
+            rectangle.setFill(lastColor);
             HBox hbox = new HBox();
             hbox.setSpacing(0);                                // spacing between each box carrying the lines and label2
             Line line = new Line(0, 0, 0, 30);
             line.setStrokeWidth(1);                            // thickness
             hbox.getChildren().add(line);
-            Label label2 = new Label(Integer.toString(accumulativeSeconds+1));
+            Label label2 = new Label(Integer.toString(lastTime));
             label2.setTranslateY(35);
             hbox.getChildren().add(label2);
 
             StackPane stackPane = new StackPane();
             stackPane.getChildren().addAll(rectangle, label, hbox);
             ganttChart.getChildren().add(stackPane);
-
-            ganttChart.adjustView(); // TODO fix here
+            lastProcess=-1;
+            tempX=50;
+        }
+        else{           // ready queue is empty and we're still counting
+            Rectangle rectangle = new Rectangle(50, 50);
+            rectangle.setFill(Color.TRANSPARENT);
+            StackPane stackPane = new StackPane();
+            stackPane.getChildren().addAll(rectangle);
+            ganttChart.getChildren().add(stackPane);
         }
 
         algorithmType.runProcess();
@@ -255,13 +298,14 @@ public class App extends Application {
     }
 
     private void dropdownOnAction(ActionEvent event) {
+        ganttChart.Clear();
+        timeline.stop();
+        accumulativeSeconds = 0;
+        timer.reset();
         ComboBox<SchedulerAlgorithm> source = (ComboBox<SchedulerAlgorithm>) event.getSource();
         SchedulerAlgorithm selectedValue = source.getSelectionModel().getSelectedItem();
         switch (selectedValue) {
             case NONE:
-                timeline.stop();
-                accumulativeSeconds = 0;
-                timer.reset();
                 algorithmType = null;
                 currentSchedulerState = SchedulerState.INVALID;
                 updateLook();

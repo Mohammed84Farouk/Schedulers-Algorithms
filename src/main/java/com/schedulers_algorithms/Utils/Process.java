@@ -1,6 +1,7 @@
 package com.schedulers_algorithms.Utils;
 
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
 public class Process {
 
@@ -58,7 +59,7 @@ public class Process {
         return this.turnAroundTime;
     }
     public Color getColor() {
-        return color;
+        return this.color;
     }
     public int getLastQueue() {
         return this.lastQueue;
