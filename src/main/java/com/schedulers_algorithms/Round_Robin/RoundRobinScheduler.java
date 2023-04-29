@@ -87,14 +87,17 @@ public class RoundRobinScheduler implements AlgorithmType{
         } else {
             currentProcess = queue2.poll();
         }
+        System.out.println("getCPUHookedProcess() "+currentProcess);
         return currentProcess;
     }
 
     @Override
     public boolean isCPUBuzy() {
         if (!queue1.isEmpty() || !queue2.isEmpty()) {
+            System.out.println("isCPUBuzy() true");
             return true;
         } else {
+            System.out.println("isCPUBuzy() false");
             return false;
         }
     }

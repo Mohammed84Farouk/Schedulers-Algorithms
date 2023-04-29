@@ -201,6 +201,8 @@ public class App extends Application {
                     rrQuantumSpinBox.setDisable(false);
                 else
                     rrQuantumSpinBox.setDisable(true);
+                generateAverageWaitingTimeButton.setDisable(true);
+                generateAverageTurnaroundTimeButton.setDisable(true);
                 break;
             case PAUSED:
                 startButton.setDisable(true);
@@ -212,6 +214,8 @@ public class App extends Application {
                     rrQuantumSpinBox.setDisable(false);
                 else
                     rrQuantumSpinBox.setDisable(true);
+                generateAverageWaitingTimeButton.setDisable(false);
+                generateAverageTurnaroundTimeButton.setDisable(false);
                 break;
             case RUNNING:
                 startButton.setDisable(true);
@@ -223,6 +227,8 @@ public class App extends Application {
                     rrQuantumSpinBox.setDisable(true);
                 else
                     rrQuantumSpinBox.setDisable(true);
+                generateAverageWaitingTimeButton.setDisable(true);
+                generateAverageTurnaroundTimeButton.setDisable(true);
                 break;
             case INVALID:
                 startButton.setDisable(true);
@@ -231,6 +237,8 @@ public class App extends Application {
                 continueButton.setDisable(true);
                 addProcessButton.setDisable(true);
                 rrQuantumSpinBox.setDisable(true);
+                generateAverageWaitingTimeButton.setDisable(true);
+                generateAverageTurnaroundTimeButton.setDisable(true);
                 break;
             default:
                 break;
