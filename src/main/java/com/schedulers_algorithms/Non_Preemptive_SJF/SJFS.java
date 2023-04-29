@@ -37,7 +37,7 @@ public class SJFS implements AlgorithmType {
     }
 
     @Override
-    public boolean isCPUBuzy() {
+    public boolean isCPUBusy() {
         return currentProcess != null;
     }
 

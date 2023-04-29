@@ -61,7 +61,7 @@ public class RoundRobinScheduler implements AlgorithmType{
     }
 
     @Override
-    public boolean isCPUBuzy() {
+    public boolean isCPUBusy() {
         Process currentProcess;
         if (!queue1.isEmpty()) {
             currentProcess = queue1.poll();

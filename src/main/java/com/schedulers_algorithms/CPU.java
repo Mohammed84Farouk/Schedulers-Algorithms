@@ -5,7 +5,7 @@ import com.schedulers_algorithms.Utils.Process;
 public class CPU {
     public enum CPUState {
         IDLE,
-        BUZY
+        BUSY
     }
 
     private CPUState state = CPUState.IDLE;
@@ -36,7 +36,5 @@ public class CPU {
         return this.hookedProcess.getPriority();
     }
 
-    public boolean isBuzy() {
-        return (state == CPUState.BUZY);
-    }
+    public boolean isBusy() { return (state == CPUState.BUSY); }
 }

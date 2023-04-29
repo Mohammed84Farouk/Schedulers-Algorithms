@@ -1,54 +1,36 @@
 package com.schedulers_algorithms;
 
-import com.schedulers_algorithms.Non_Preemptive_SJF.SJFS;
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.shape.Line;
-import javafx.stage.Stage;
-import javafx.scene.control.Button;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.geometry.Pos;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.collections.ObservableList;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.collections.FXCollections;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-
-import com.schedulers_algorithms.Utils.Process;
-import com.schedulers_algorithms.Utils.ProcessColor;
 import com.schedulers_algorithms.Add_Process_Dialog.AddProcessDialog;
 import com.schedulers_algorithms.Dropdown_Button.DropdownButton;
 import com.schedulers_algorithms.GanttChart.GanttChart;
+import com.schedulers_algorithms.Icons.*;
+import com.schedulers_algorithms.Non_Preemptive_SJF.SJFS;
+import com.schedulers_algorithms.Preemptive_Priority.PreemptivePriority;
 import com.schedulers_algorithms.ProcessDetailsTable.ProcessDetailsTable;
 import com.schedulers_algorithms.Timer.Timer;
-
-import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.paint.Color;
-import javafx.scene.control.ScrollPane;
-
+import com.schedulers_algorithms.Utils.Process;
+import com.schedulers_algorithms.Utils.ProcessColor;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
-
-import javafx.event.ActionEvent;
-
-import com.schedulers_algorithms.Icons.AddProcessButtonIcon;
-import com.schedulers_algorithms.Icons.ButtonIcon;
-import com.schedulers_algorithms.Icons.ContinueButtonIcon;
-import com.schedulers_algorithms.Icons.PauseButtonIcon;
-import com.schedulers_algorithms.Icons.StartButtonIcon;
-import com.schedulers_algorithms.Icons.StopButtonIcon;
-import com.schedulers_algorithms.Preemptive_Priority.PreemptivePriority;
 
 /**
  * JavaFX App
@@ -89,36 +71,34 @@ public class App extends Application {
      */
     private int processesIdTracker = 0;
 
-    private static Scene scene;
-
     AlgorithmType algorithmType;
 
 
     Timer timer = new Timer("00:00:00");
 
-    private Button startButton = new Button();
-    private ButtonIcon startButtonIcon = new StartButtonIcon();
+    private final Button startButton = new Button();
+    private final ButtonIcon startButtonIcon = new StartButtonIcon();
 
-    private Button stopButton = new Button();
-    private ButtonIcon stopButtonIcon = new StopButtonIcon();
+    private final Button stopButton = new Button();
+    private final ButtonIcon stopButtonIcon = new StopButtonIcon();
 
-    private Button pauseButton = new Button();
-    private ButtonIcon pauseButtonIcon = new PauseButtonIcon();
+    private final Button pauseButton = new Button();
+    private final ButtonIcon pauseButtonIcon = new PauseButtonIcon();
 
-    private Button continueButton = new Button();
-    private ButtonIcon continueButtonIcon = new ContinueButtonIcon();
+    private final Button continueButton = new Button();
+    private final ButtonIcon continueButtonIcon = new ContinueButtonIcon();
 
-    private Button addProcessButton = new Button();
-    private ButtonIcon addProcessButtonIcon = new AddProcessButtonIcon();
+    private final Button addProcessButton = new Button();
+    private final ButtonIcon addProcessButtonIcon = new AddProcessButtonIcon();
 
-    private DropdownButton dropdownButton = new DropdownButton();
+    private final DropdownButton dropdownButton = new DropdownButton();
 
-    private ProcessDetailsTable processDetailsTable = new ProcessDetailsTable();
+    private final ProcessDetailsTable processDetailsTable = new ProcessDetailsTable();
 
     GanttChart ganttChart = new GanttChart();
 
     Timeline timeline = new Timeline(
-            new KeyFrame(Duration.seconds(1), this::handleTimelimeEvent));
+            new KeyFrame(Duration.seconds(1), this::handleTimelineEvent));
 
     public static int getCurrentTime(){
         return accumulativeSeconds;
@@ -129,33 +109,17 @@ public class App extends Application {
      */
     int tempX=50, lastProcess=-1, lastTime=0;
     Color lastColor;
-    private void handleTimelimeEvent(ActionEvent event) {
-        if (algorithmType.isCPUBuzy()) {
+    private void handleTimelineEvent(ActionEvent event) {
+        if (algorithmType.isCPUBusy()) {
             Label label = new Label("P"+lastProcess);
             if(lastProcess==-1) {
                 lastProcess = algorithmType.getCPUHookedProcess().getId();
                 lastTime = accumulativeSeconds;
                 lastColor = algorithmType.getCPUHookedProcess().getColor();
             }
-            else if(lastProcess==algorithmType.getCPUHookedProcess().getId()) {
-                tempX += 50;
-//                lastColor=algorithmType.getCPUHookedProcess().getColor();
-            }
+            else if(lastProcess==algorithmType.getCPUHookedProcess().getId()) tempX += 50;
             else {
-                Rectangle rectangle = new Rectangle(tempX, 50);
-                rectangle.setFill(lastColor);
-                HBox hbox = new HBox();
-                hbox.setSpacing(0);                                // spacing between each box carrying the lines and label2
-                Line line = new Line(0, 0, 0, 30);
-                line.setStrokeWidth(1);                            // thickness
-                hbox.getChildren().add(line);
-                Label label2 = new Label(Integer.toString(lastTime));
-                label2.setTranslateY(35);
-                hbox.getChildren().add(label2);
-
-                StackPane stackPane = new StackPane();
-                stackPane.getChildren().addAll(rectangle, label, hbox);
-                ganttChart.getChildren().add(stackPane);
+                createRectangle(label);
                 tempX = 50;
                 lastProcess = algorithmType.getCPUHookedProcess().getId();
                 lastTime=accumulativeSeconds;
@@ -167,20 +131,7 @@ public class App extends Application {
         }
         else if(lastProcess!=-1){
             Label label = new Label("P"+lastProcess);
-            Rectangle rectangle = new Rectangle(tempX, 50);
-            rectangle.setFill(lastColor);
-            HBox hbox = new HBox();
-            hbox.setSpacing(0);                                // spacing between each box carrying the lines and label2
-            Line line = new Line(0, 0, 0, 30);
-            line.setStrokeWidth(1);                            // thickness
-            hbox.getChildren().add(line);
-            Label label2 = new Label(Integer.toString(lastTime));
-            label2.setTranslateY(35);
-            hbox.getChildren().add(label2);
-
-            StackPane stackPane = new StackPane();
-            stackPane.getChildren().addAll(rectangle, label, hbox);
-            ganttChart.getChildren().add(stackPane);
+            createRectangle(label);
             lastProcess=-1;
             tempX=50;
         }
@@ -200,6 +151,23 @@ public class App extends Application {
         String secondsStr = String.format("%02d", (accumulativeSeconds % 60));
 
         timer.setText(hoursStr+':'+minutesStr+':'+secondsStr);
+    }
+
+    private void createRectangle(Label label) {
+        Rectangle rectangle = new Rectangle(tempX, 50);
+        rectangle.setFill(lastColor);
+        HBox hbox = new HBox();
+        hbox.setSpacing(0);                                // spacing between each box carrying the lines and label2
+        Line line = new Line(0, 0, 0, 30);
+        line.setStrokeWidth(1);                            // thickness
+        hbox.getChildren().add(line);
+        Label label2 = new Label(Integer.toString(lastTime));
+        label2.setTranslateY(35);
+        hbox.getChildren().add(label2);
+
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(rectangle, label, hbox);
+        ganttChart.getChildren().add(stackPane);
     }
 
     private void updateLook() {
@@ -384,7 +352,7 @@ public class App extends Application {
 
         mainLayout.setAlignment(Pos.CENTER);
 
-        scene = new Scene(mainLayout, 640, 480);
+        Scene scene = new Scene(mainLayout, 640, 480);
         stage.setScene(scene);
         stage.setTitle(TITLE);
         stage.show();
@@ -393,5 +361,4 @@ public class App extends Application {
     public static void main(String[] args) {
         launch();
     }
-
 }

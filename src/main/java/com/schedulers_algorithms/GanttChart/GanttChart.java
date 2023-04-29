@@ -4,12 +4,10 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
 public class GanttChart extends HBox {
 
-    private ScrollPane scrollPane = new ScrollPane();
+    private final ScrollPane scrollPane = new ScrollPane();
 
     public void place(Pane layout) {
         setSpacing(5);
