@@ -14,6 +14,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
+import com.schedulers_algorithms.App.SchedulerAlgorithm;
 import com.schedulers_algorithms.Utils.Process;
 import com.schedulers_algorithms.Utils.ProcessColor;
 
@@ -41,23 +43,32 @@ public class AddProcessDialog extends Stage {
         close();
     }
 
-    public void showDialog() {
+    public void showDialog(SchedulerAlgorithm algorithm) {
         initModality(Modality.APPLICATION_MODAL);
         setTitle("Add Process");
 
         VBox mainLayout = new VBox();
         mainLayout.setSpacing(10);
 
-        HBox processPriority = new HBox();
-        processPriority.setSpacing(20);
-        VBox.setMargin(processPriority, new javafx.geometry.Insets(10, 10, 0, 10));
-        Label processPriorityLabel = new Label("Process Priority:");
-        processPriorityLabel.setTextAlignment(TextAlignment.CENTER);
-        processPriority.getChildren().addAll(processPriorityLabel, processPriorityField);
+        if (algorithm == SchedulerAlgorithm.PREEMPTIVE_PRIORITY
+                || algorithm == SchedulerAlgorithm.NON_PREEMPTIVE_PRIORITY) {
+            HBox processPriority = new HBox();
+            processPriority.setSpacing(20);
+            VBox.setMargin(processPriority, new javafx.geometry.Insets(10, 10, 0, 10));
+            Label processPriorityLabel = new Label("Process Priority:");
+            processPriorityLabel.setTextAlignment(TextAlignment.CENTER);
+            processPriority.getChildren().addAll(processPriorityLabel, processPriorityField);
+
+            mainLayout.getChildren().add(processPriority);
+        }
 
         HBox processBurst = new HBox();
         processBurst.setSpacing(20);
-        VBox.setMargin(processBurst, new javafx.geometry.Insets(0, 10, 0, 10));
+        if (algorithm == SchedulerAlgorithm.PREEMPTIVE_PRIORITY
+                || algorithm == SchedulerAlgorithm.NON_PREEMPTIVE_PRIORITY)
+            VBox.setMargin(processBurst, new javafx.geometry.Insets(0, 10, 0, 10));
+        else
+            VBox.setMargin(processBurst, new javafx.geometry.Insets(10, 10, 0, 10));
         Label processBurstLabel = new Label("Process Burst:");
         processBurstLabel.setTextAlignment(TextAlignment.CENTER);
         processBurst.getChildren().addAll(processBurstLabel, processBurstField);
@@ -72,7 +83,7 @@ public class AddProcessDialog extends Stage {
         Button saveButton = new Button("Save");
         saveButton.setOnMousePressed(this::handleSaveButtonPress);
 
-        mainLayout.getChildren().addAll(processPriority, processBurst, processColor, saveButton);
+        mainLayout.getChildren().addAll(processBurst, processColor, saveButton);
 
         Scene addProcessDialogScene = new Scene(mainLayout, 320, 240);
 

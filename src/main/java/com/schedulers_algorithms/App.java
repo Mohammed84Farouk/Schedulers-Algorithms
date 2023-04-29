@@ -10,6 +10,7 @@ import com.schedulers_algorithms.Round_Robin.RoundRobinScheduler;
 import com.schedulers_algorithms.Non_Preemptive_SJF.SJFS;
 import com.schedulers_algorithms.Preemptive_Priority.PreemptivePriority;
 import com.schedulers_algorithms.ProcessDetailsTable.ProcessDetailsTable;
+import com.schedulers_algorithms.RRQuantumSpinBox.RRQuantumSpinBox;
 import com.schedulers_algorithms.Timer.Timer;
 import com.schedulers_algorithms.Utils.Process;
 import com.schedulers_algorithms.Utils.ProcessColor;
@@ -32,6 +33,8 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 
 import java.io.IOException;
 
@@ -59,6 +62,7 @@ public class App extends Application {
         INVALID
     }
 
+    private SchedulerAlgorithm currentSchedulerAlgorithm = SchedulerAlgorithm.NONE;
     private SchedulerState currentSchedulerState = SchedulerState.INVALID;
 
     /*
@@ -75,7 +79,6 @@ public class App extends Application {
     private int processesIdTracker = 0;
 
     AlgorithmType algorithmType;
-
 
     Timer timer = new Timer("00:00:00");
 
@@ -94,6 +97,8 @@ public class App extends Application {
     private final Button addProcessButton = new Button();
     private final ButtonIcon addProcessButtonIcon = new AddProcessButtonIcon();
 
+    private final RRQuantumSpinBox rrQuantumSpinBox = new RRQuantumSpinBox();
+
     private final DropdownButton dropdownButton = new DropdownButton();
 
     private final ProcessDetailsTable processDetailsTable = new ProcessDetailsTable();
@@ -105,43 +110,43 @@ public class App extends Application {
     Timeline timeline = new Timeline(
             new KeyFrame(Duration.seconds(1), this::handleTimelineEvent));
 
-    public static int getCurrentTime(){
+    public static int getCurrentTime() {
         return accumulativeSeconds;
     }
+
     /*
      * 
      * Timer function.
      */
-    int tempX=50, lastProcess=-1, lastTime=0, Fathy=-1;
+    int tempX = 50, lastProcess = -1, lastTime = 0, Fathy = -1;
     Color lastColor;
+
     private void handleTimelineEvent(ActionEvent event) {
         if (algorithmType.isCPUBuzy()) {
-            Label label = new Label("P"+lastProcess);
-            if(lastProcess==-1) {
+            Label label = new Label("P" + lastProcess);
+            if (lastProcess == -1) {
                 lastProcess = algorithmType.getCPUHookedProcess().getId();
-                lastTime = accumulativeSeconds+(algorithmType instanceof SJFS?-1:0);
+                lastTime = accumulativeSeconds + (algorithmType instanceof SJFS ? -1 : 0);
                 lastColor = algorithmType.getCPUHookedProcess().getColor();
-            }
-            else if(lastProcess==algorithmType.getCPUHookedProcess().getId()) tempX += 50;
+            } else if (lastProcess == algorithmType.getCPUHookedProcess().getId())
+                tempX += 50;
             else {
                 createRectangle(label);
                 tempX = 50;
                 lastProcess = algorithmType.getCPUHookedProcess().getId();
-                lastTime=accumulativeSeconds+(algorithmType instanceof SJFS?-1:0);
-                lastColor=algorithmType.getCPUHookedProcess().getColor();
+                lastTime = accumulativeSeconds + (algorithmType instanceof SJFS ? -1 : 0);
+                lastColor = algorithmType.getCPUHookedProcess().getColor();
             }
-            lastProcess=algorithmType.getCPUHookedProcess().getId();
+            lastProcess = algorithmType.getCPUHookedProcess().getId();
 
             ganttChart.adjustView(); // TODO fix here
-        }
-        else if(lastProcess!=-1){
-            Label label = new Label("P"+lastProcess);
+        } else if (lastProcess != -1) {
+            Label label = new Label("P" + lastProcess);
             createRectangle(label);
-            lastProcess=-1;
-            tempX=50;
-        }
-        else{           // ready queue is empty and we're still counting
-            if(!(algorithmType instanceof SJFS) || algorithmType instanceof SJFS && accumulativeSeconds>=1) {
+            lastProcess = -1;
+            tempX = 50;
+        } else { // ready queue is empty and we're still counting
+            if (!(algorithmType instanceof SJFS) || algorithmType instanceof SJFS && accumulativeSeconds >= 1) {
                 Rectangle rectangle = new Rectangle(50, 50);
                 rectangle.setFill(Color.TRANSPARENT);
                 StackPane stackPane = new StackPane();
@@ -157,16 +162,16 @@ public class App extends Application {
         String minutesStr = String.format("%02d", ((accumulativeSeconds / 60) % 60));
         String secondsStr = String.format("%02d", (accumulativeSeconds % 60));
 
-        timer.setText(hoursStr+':'+minutesStr+':'+secondsStr);
+        timer.setText(hoursStr + ':' + minutesStr + ':' + secondsStr);
     }
 
     private void createRectangle(Label label) {
         Rectangle rectangle = new Rectangle(tempX, 50);
         rectangle.setFill(lastColor);
         HBox hbox = new HBox();
-        hbox.setSpacing(0);                                // spacing between each box carrying the lines and label2
+        hbox.setSpacing(0); // spacing between each box carrying the lines and label2
         Line line = new Line(0, 0, 0, 30);
-        line.setStrokeWidth(1);                            // thickness
+        line.setStrokeWidth(1); // thickness
         hbox.getChildren().add(line);
         Label label2 = new Label(Integer.toString(lastTime));
         label2.setTranslateY(35);
@@ -185,6 +190,8 @@ public class App extends Application {
                 pauseButton.setDisable(true);
                 continueButton.setDisable(true);
                 addProcessButton.setDisable(false);
+                if (currentSchedulerAlgorithm == SchedulerAlgorithm.RR)
+                    rrQuantumSpinBox.setDisable(false);
                 break;
             case PAUSED:
                 startButton.setDisable(true);
@@ -192,6 +199,8 @@ public class App extends Application {
                 pauseButton.setDisable(true);
                 continueButton.setDisable(false);
                 addProcessButton.setDisable(false);
+                if (currentSchedulerAlgorithm == SchedulerAlgorithm.RR)
+                    rrQuantumSpinBox.setDisable(false);
                 break;
             case RUNNING:
                 startButton.setDisable(true);
@@ -199,6 +208,8 @@ public class App extends Application {
                 pauseButton.setDisable(false);
                 continueButton.setDisable(true);
                 addProcessButton.setDisable(false);
+                if (currentSchedulerAlgorithm == SchedulerAlgorithm.RR)
+                    rrQuantumSpinBox.setDisable(true);
                 break;
             case INVALID:
                 startButton.setDisable(true);
@@ -206,6 +217,7 @@ public class App extends Application {
                 pauseButton.setDisable(true);
                 continueButton.setDisable(true);
                 addProcessButton.setDisable(true);
+                rrQuantumSpinBox.setDisable(true);
                 break;
             default:
                 break;
@@ -250,26 +262,49 @@ public class App extends Application {
     }
 
     private void handleAddProcessButtonPress(MouseEvent event) {
-        if (currentSchedulerState == SchedulerState.RUNNING) timeline.pause();
+        if (currentSchedulerState == SchedulerState.RUNNING)
+            timeline.pause();
 
         StringBuilder processPriority = new StringBuilder();
         StringBuilder processBurst = new StringBuilder();
         ProcessColor processColor = new ProcessColor(Color.RED);
         AddProcessDialog addProcessDialog = new AddProcessDialog(processPriority, processBurst, processColor);
-        addProcessDialog.showDialog();
 
-        Process process = new Process(
-            processesIdTracker++, 
-            accumulativeSeconds,
-            Integer.parseInt(processBurst.toString()),
-            Integer.parseInt(processPriority.toString()),
-            processColor.getColor());
+        addProcessDialog.showDialog(currentSchedulerAlgorithm);
+
+        if (currentSchedulerAlgorithm == SchedulerAlgorithm.PREEMPTIVE_PRIORITY
+                || currentSchedulerAlgorithm == SchedulerAlgorithm.NON_PREEMPTIVE_PRIORITY) {
+            if (processPriority.length() == 0)
+                return;
+        }
+
+        if (processBurst.length() == 0)
+            return;
+
+        Process process;
+
+        if (currentSchedulerAlgorithm == SchedulerAlgorithm.PREEMPTIVE_PRIORITY
+                || currentSchedulerAlgorithm == SchedulerAlgorithm.NON_PREEMPTIVE_PRIORITY) {
+            process = new Process(
+                    processesIdTracker++,
+                    accumulativeSeconds,
+                    Integer.parseInt(processBurst.toString()),
+                    Integer.parseInt(processPriority.toString()),
+                    processColor.getColor());
+        } else {
+            process = new Process(
+                    processesIdTracker++,
+                    accumulativeSeconds,
+                    Integer.parseInt(processBurst.toString()),
+                    processColor.getColor());
+        }
 
         processDetailsTable.addProcess(SchedulerAlgorithm.PREEMPTIVE_PRIORITY, process);
 
         algorithmType.addProcessToReadyQueue(process);
 
-        if (currentSchedulerState == SchedulerState.RUNNING) timeline.play();
+        if (currentSchedulerState == SchedulerState.RUNNING)
+            timeline.play();
     }
 
     private void dropdownOnAction(ActionEvent event) {
@@ -282,42 +317,49 @@ public class App extends Application {
         switch (selectedValue) {
             case NONE:
                 algorithmType = null;
+                currentSchedulerAlgorithm = SchedulerAlgorithm.NONE;
                 currentSchedulerState = SchedulerState.INVALID;
                 updateLook();
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.NONE);
                 break;
             case FCFS:
                 algorithmType = new FirstComeFirstServed();
+                currentSchedulerAlgorithm = SchedulerAlgorithm.FCFS;
                 currentSchedulerState = SchedulerState.INITIALIZATION;
                 updateLook();
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.FCFS);
                 break;
             case NON_PREEMPTIVE_PRIORITY:
                 algorithmType = new PreemptivePriority(false);
+                currentSchedulerAlgorithm = SchedulerAlgorithm.NON_PREEMPTIVE_PRIORITY;
                 currentSchedulerState = SchedulerState.INITIALIZATION;
                 updateLook();
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.NON_PREEMPTIVE_PRIORITY);
                 break;
             case NON_PREEMPTIVE_SJF:
                 algorithmType = new SJFS(false);
+                currentSchedulerAlgorithm = SchedulerAlgorithm.NON_PREEMPTIVE_SJF;
                 currentSchedulerState = SchedulerState.INITIALIZATION;
                 updateLook();
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.NON_PREEMPTIVE_SJF);
                 break;
             case PREEMPTIVE_PRIORITY:
                 algorithmType = new PreemptivePriority(true);
+                currentSchedulerAlgorithm = SchedulerAlgorithm.PREEMPTIVE_PRIORITY;
                 currentSchedulerState = SchedulerState.INITIALIZATION;
                 updateLook();
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.PREEMPTIVE_PRIORITY);
                 break;
             case PREEMPTIVE_SJF:
                 algorithmType = new SJFS(true);
+                currentSchedulerAlgorithm = SchedulerAlgorithm.PREEMPTIVE_SJF;
                 currentSchedulerState = SchedulerState.INITIALIZATION;
                 updateLook();
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.NON_PREEMPTIVE_SJF);
                 break;
             case RR:
-                algorithmType = new RoundRobinScheduler(2);
+                algorithmType = new RoundRobinScheduler(rrQuantumSpinBox.getValue());
+                currentSchedulerAlgorithm = SchedulerAlgorithm.RR;
                 currentSchedulerState = SchedulerState.INITIALIZATION;
                 updateLook();
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.RR);
@@ -357,6 +399,8 @@ public class App extends Application {
 
         schedulersControllers.getChildren().addAll(startButton, stopButton, pauseButton, continueButton,
                 addProcessButton);
+
+        rrQuantumSpinBox.place(schedulersControllers);
 
         schedulersControllers.setSpacing(10);
 

@@ -201,6 +201,7 @@ public class ProcessDetailsTable extends TableView<String[]> {
 
         getColumns().addAll(columns);
     }
+
     public void addProcess(SchedulerAlgorithm algorithm, Process process) {
         switch (algorithm) {
             case NONE:
@@ -209,8 +210,7 @@ public class ProcessDetailsTable extends TableView<String[]> {
                 data.add(new String[] {
                     "P"+Integer.toString(process.getId()),
                         String.valueOf(process.getArrivalTime()),
-                        String.valueOf(process.getBurstTime()),
-                        String.valueOf(process.getPriority()) });
+                        String.valueOf(process.getBurstTime()) });
                 break;
             case NON_PREEMPTIVE_PRIORITY:
                 break;
@@ -229,8 +229,7 @@ public class ProcessDetailsTable extends TableView<String[]> {
                 data.add(new String[] {
                     "P"+Integer.toString(process.getId()),
                         String.valueOf(process.getArrivalTime()),
-                        String.valueOf(process.getBurstTime()),
-                        String.valueOf(process.getPriority()) });
+                        String.valueOf(process.getBurstTime()) });
                 break;
             default:
                 break;

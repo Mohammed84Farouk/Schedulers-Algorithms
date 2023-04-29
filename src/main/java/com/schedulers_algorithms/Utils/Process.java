@@ -23,6 +23,15 @@ public class Process {
 		this.color = color;
     }
 
+    public Process(int id, int arrivalTime, int burstTime, Color color) {
+        this.id = id;
+        this.arrivalTime = arrivalTime;
+        this.burstTime = burstTime;
+        this.priority = -1;
+        this.lastQueue = 1;
+		this.color = color;
+    }
+
     public int getId() {
         return this.id;
     }
