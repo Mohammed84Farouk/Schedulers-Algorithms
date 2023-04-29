@@ -19,4 +19,8 @@ public class Timer extends Label {
 
         layout.getChildren().add(this);
     }
+
+    public void reset() {
+        setText("00:00:00");
+    }
 }

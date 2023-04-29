@@ -17,6 +17,8 @@ public class PreemptivePriority implements AlgorithmType {
 
     private Vector<Process> readyQueue;
 
+    private int agingRoundTime = 0;
+
     public PreemptivePriority() {
         cpu = new CPU();
         readyQueue = new Vector<Process>();
@@ -68,15 +70,20 @@ public class PreemptivePriority implements AlgorithmType {
 
     @Override
     public void runProcess() {
+        agingRoundTime++;
+        if (agingRoundTime > 4) {
+            ageProcesses();
+            agingRoundTime = 0;
+        }
+
         if (cpu.getState() == CPUState.IDLE) {
             if (!hookProcessOnCPUFromReadyQueue())
                 return;
         }
 
-        int hookedProcessBurstTime = cpu.getHookedProcess().getBurstTime();
-        cpu.getHookedProcess().setBurstTime(hookedProcessBurstTime - 1);
+        cpu.getHookedProcess().runProcess(1);
 
-        if ((hookedProcessBurstTime - 1) == 0) {
+        if (cpu.getHookedProcess().isFinished()) {
             cpu.switchState(CPUState.IDLE);
             cpu.unHookProcess();
             hookProcessOnCPUFromReadyQueue();
@@ -103,5 +110,11 @@ public class PreemptivePriority implements AlgorithmType {
         }
 
         return true;
+    }
+
+    private void ageProcesses() {
+        for (int i = 0 ; i < readyQueue.size() ; i++) {
+            readyQueue.elementAt(i).age();
+        }
     }
 }

@@ -57,6 +57,9 @@ public class Process {
     public int getTurnAroundTime() {
         return this.turnAroundTime;
     }
+    public Color getColor() {
+        return color;
+    }
     public int getLastQueue() {
         return this.lastQueue;
     }
@@ -68,5 +71,9 @@ public class Process {
     }
     public void runProcess(int time) {
         burstTime -= time;
+    }
+    public void age() {
+        if (priority == 0) return;
+        priority--;
     }
 }

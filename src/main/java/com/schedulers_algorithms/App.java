@@ -248,6 +248,9 @@ public class App extends Application {
         SchedulerAlgorithm selectedValue = source.getSelectionModel().getSelectedItem();
         switch (selectedValue) {
             case NONE:
+                timeline.stop();
+                accumulativeSeconds = 0;
+                timer.reset();
                 algorithmType = null;
                 currentSchedulerState = SchedulerState.INVALID;
                 updateLook();
