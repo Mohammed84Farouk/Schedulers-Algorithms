@@ -112,14 +112,14 @@ public class App extends Application {
      * 
      * Timer function.
      */
-    int tempX=50, lastProcess=-1, lastTime=0;
+    int tempX=50, lastProcess=-1, lastTime=0, Fathy=-1;
     Color lastColor;
     private void handleTimelineEvent(ActionEvent event) {
         if (algorithmType.isCPUBuzy()) {
             Label label = new Label("P"+lastProcess);
             if(lastProcess==-1) {
                 lastProcess = algorithmType.getCPUHookedProcess().getId();
-                lastTime = accumulativeSeconds;
+                lastTime = accumulativeSeconds+(algorithmType instanceof SJFS?-1:0);
                 lastColor = algorithmType.getCPUHookedProcess().getColor();
             }
             else if(lastProcess==algorithmType.getCPUHookedProcess().getId()) tempX += 50;
@@ -127,7 +127,7 @@ public class App extends Application {
                 createRectangle(label);
                 tempX = 50;
                 lastProcess = algorithmType.getCPUHookedProcess().getId();
-                lastTime=accumulativeSeconds;
+                lastTime=accumulativeSeconds+(algorithmType instanceof SJFS?-1:0);
                 lastColor=algorithmType.getCPUHookedProcess().getColor();
             }
             lastProcess=algorithmType.getCPUHookedProcess().getId();
@@ -141,11 +141,13 @@ public class App extends Application {
             tempX=50;
         }
         else{           // ready queue is empty and we're still counting
-            Rectangle rectangle = new Rectangle(50, 50);
-            rectangle.setFill(Color.TRANSPARENT);
-            StackPane stackPane = new StackPane();
-            stackPane.getChildren().addAll(rectangle);
-            ganttChart.getChildren().add(stackPane);
+            if(!(algorithmType instanceof SJFS) || algorithmType instanceof SJFS && accumulativeSeconds>=1) {
+                Rectangle rectangle = new Rectangle(50, 50);
+                rectangle.setFill(Color.TRANSPARENT);
+                StackPane stackPane = new StackPane();
+                stackPane.getChildren().addAll(rectangle);
+                ganttChart.getChildren().add(stackPane);
+            }
         }
 
         algorithmType.executeProcess();
