@@ -19,6 +19,7 @@ public class PreemptivePriority implements AlgorithmType {
     private Vector<Process> readyQueue;
 
     private double totalWaitingTime = 0.0;
+    private double totalTurnaroundTime = 0.0;
     private int processesCount = 0;
 
     private int agingRoundTime = 0;
@@ -101,6 +102,7 @@ public class PreemptivePriority implements AlgorithmType {
         cpu.getHookedProcess().runProcess(1);
 
         if (cpu.getHookedProcess().isFinished()) {
+            totalTurnaroundTime+=currentTime-cpu.getHookedProcess().getArrivalTime();
             cpu.switchState(CPUState.IDLE);
             cpu.unHookProcess();
             hookProcessOnCPUFromReadyQueue();
@@ -141,7 +143,6 @@ public class PreemptivePriority implements AlgorithmType {
 
     @Override
     public double getAverageTurnaroundTime() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAverageTurnaroundTime'");
+        return totalTurnaroundTime / processesCount;
     }
 }

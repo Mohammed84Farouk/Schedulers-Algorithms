@@ -27,7 +27,7 @@ public class FirstComeFirstServed implements AlgorithmType {
                 cpu.switchState(CPUState.BUZY);
                 cpu.hookProcess(process);
                 return;
-            case BUSY:
+            case BUZY:
                 hookProcessOnCPUIfHigherPriority(process);
                 return;
             default:
@@ -96,7 +96,9 @@ public class FirstComeFirstServed implements AlgorithmType {
         }
 
         return true;
-        public double getAverageWaitingTime() {
+    }
+    
+    public double getAverageWaitingTime() {
         int totalWaitingTime = 0;
         int numProcesses = 0;
         for (Process p : queue1) {
@@ -110,6 +112,7 @@ public class FirstComeFirstServed implements AlgorithmType {
         return (double) totalWaitingTime / numProcesses;
     }
     
+    @Override
     public double getAverageTurnaroundTime() {
         int totalTurnaroundTime = 0;
         int numProcesses = 0;
@@ -123,17 +126,17 @@ public class FirstComeFirstServed implements AlgorithmType {
         }
         return (double) totalTurnaroundTime / numProcesses;
     }
-    }
+    
 
-    @Override
-    public double getAverageWaitingTime() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAverageWaitingTime'");
-    }
+    // @Override
+    // public double getAverageWaitingTime() {
+    //     // TODO Auto-generated method stub
+    //     throw new UnsupportedOperationException("Unimplemented method 'getAverageWaitingTime'");
+    // }
 
-    @Override
-    public double getAverageTurnaroundTime() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAverageTurnaroundTime'");
-    }
+    // @Override
+    // public double getAverageTurnaroundTime() {
+    //     // TODO Auto-generated method stub
+    //     throw new UnsupportedOperationException("Unimplemented method 'getAverageTurnaroundTime'");
+    // }
 }
