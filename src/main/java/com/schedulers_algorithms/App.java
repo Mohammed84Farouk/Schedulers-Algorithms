@@ -280,6 +280,10 @@ public class App extends Application {
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.NONE);
                 break;
             case FCFS:
+                algorithmType = new FirstComeFirstServed();
+                currentSchedulerState = SchedulerState.INITIALIZATION;
+                updateLook();
+                processDetailsTable.switchAlgorithm(SchedulerAlgorithm.FCFS);
                 break;
             case NON_PREEMPTIVE_PRIORITY:
                 algorithmType = new PreemptivePriority(false);
@@ -302,6 +306,10 @@ public class App extends Application {
             case PREEMPTIVE_SJF:
                 break;
             case RR:
+                algorithmType = new RoundRobinScheduler(2);
+                currentSchedulerState = SchedulerState.INITIALIZATION;
+                updateLook();
+                processDetailsTable.switchAlgorithm(SchedulerAlgorithm.RR);
                 break;
             default:
                 break;
