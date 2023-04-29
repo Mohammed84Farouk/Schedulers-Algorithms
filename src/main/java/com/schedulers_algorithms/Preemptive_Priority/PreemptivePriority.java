@@ -14,17 +14,18 @@ import com.schedulers_algorithms.Utils.Process;
  */
 public class PreemptivePriority implements AlgorithmType {
     private CPU cpu;
-
+    private boolean isPreemptive;
     private Vector<Process> readyQueue;
 
     private int agingRoundTime = 0;
 
-    public PreemptivePriority() {
+    public PreemptivePriority(boolean isPreemptive) {
+        this.isPreemptive = isPreemptive;
         cpu = new CPU();
         readyQueue = new Vector<Process>();
     }
 
-    @Override
+ @Override
     public void addProcessToReadyQueue(Process process) {
         switch (cpu.getState()) {
             case IDLE:
@@ -32,8 +33,15 @@ public class PreemptivePriority implements AlgorithmType {
                 cpu.hookProcess(process);
                 return;
             case BUZY:
-                hookProcessOnCPUIfHigherPriority(process);
-                return;
+                if(isPreemptive){
+                    hookProcessOnCPUIfHigherPriority(process);
+                    return;
+                }
+                else
+                {
+                    hookProcessOnReadyQueue(process);
+                    return;
+                }
             default:
                 return;
         }
