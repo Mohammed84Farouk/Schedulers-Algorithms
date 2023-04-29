@@ -4,6 +4,8 @@ import com.schedulers_algorithms.Add_Process_Dialog.AddProcessDialog;
 import com.schedulers_algorithms.Dropdown_Button.DropdownButton;
 import com.schedulers_algorithms.GanttChart.GanttChart;
 import com.schedulers_algorithms.Icons.*;
+import com.schedulers_algorithms.FCFS.FirstComeFirstServed;
+import com.schedulers_algorithms.Round_Robin.RoundRobinScheduler;
 import com.schedulers_algorithms.Non_Preemptive_SJF.SJFS;
 import com.schedulers_algorithms.Preemptive_Priority.PreemptivePriority;
 import com.schedulers_algorithms.ProcessDetailsTable.ProcessDetailsTable;
