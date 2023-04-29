@@ -1,4 +1,4 @@
-package com.schedulers_algorithms.HardwareStatusBar;
+package com.schedulers_algorithms.StatusBar;
 
 import com.schedulers_algorithms.CPU.CPUState;
 
@@ -9,10 +9,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-public class HardwareStatusBar extends HBox {
+public class StatusBar extends HBox {
 
     Label cpuStatusValueLabel = new Label();
     Label waitingProcessesCountValueLabel = new Label();
+    Label averageWaitingTimeValueLabel = new Label();
+    Label averageTurnaroundTimeValueLabel = new Label();
 
     public void place(VBox layout) {
         setAlignment(Pos.CENTER);
@@ -28,6 +30,18 @@ public class HardwareStatusBar extends HBox {
         getChildren().add(waitingProcessesCountLabel);
         HBox.setMargin(waitingProcessesCountValueLabel, new javafx.geometry.Insets(0, 10, 0, 5));
         getChildren().add(waitingProcessesCountValueLabel);
+
+        Label averageWaitingTimeLabel = new Label("Aver Waiting Time:");
+        HBox.setMargin(averageWaitingTimeLabel, new javafx.geometry.Insets(0, 5, 0, 10));
+        getChildren().add(averageWaitingTimeLabel);
+        HBox.setMargin(averageWaitingTimeValueLabel, new javafx.geometry.Insets(0, 10, 0, 5));
+        getChildren().add(averageWaitingTimeValueLabel);
+
+        Label averageTurnaroundTimeLabel = new Label("Aver Turnaround Time:");
+        HBox.setMargin(averageTurnaroundTimeLabel, new javafx.geometry.Insets(0, 5, 0, 10));
+        getChildren().add(averageTurnaroundTimeLabel);
+        HBox.setMargin(averageTurnaroundTimeValueLabel, new javafx.geometry.Insets(0, 10, 0, 5));
+        getChildren().add(averageTurnaroundTimeValueLabel);
 
 
         layout.getChildren().add(this);
@@ -61,6 +75,14 @@ public class HardwareStatusBar extends HBox {
         else {
             cpuStatusValueLabel.setTextFill(Color.GREEN);
         }
+    }
+
+    public void updateAverageWaitingTime(double averageWaitingTime) {
+        averageWaitingTimeValueLabel.setText(Double.toString(averageWaitingTime));
+    }
+
+    public void updateAverageTurnaroundTime(double averageTurnaroundTime) {
+        averageTurnaroundTimeValueLabel.setText(Double.toString(averageTurnaroundTime));
     }
     
 }

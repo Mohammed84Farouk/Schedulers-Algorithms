@@ -3,10 +3,10 @@ package com.schedulers_algorithms;
 import com.schedulers_algorithms.Add_Process_Dialog.AddProcessDialog;
 import com.schedulers_algorithms.Dropdown_Button.DropdownButton;
 import com.schedulers_algorithms.GanttChart.GanttChart;
-import com.schedulers_algorithms.HardwareStatusBar.HardwareStatusBar;
 import com.schedulers_algorithms.Icons.*;
 import com.schedulers_algorithms.FCFS.FirstComeFirstServed;
 import com.schedulers_algorithms.Round_Robin.RoundRobinScheduler;
+import com.schedulers_algorithms.StatusBar.StatusBar;
 import com.schedulers_algorithms.Non_Preemptive_SJF.SJFS;
 import com.schedulers_algorithms.Preemptive_Priority.PreemptivePriority;
 import com.schedulers_algorithms.ProcessDetailsTable.ProcessDetailsTable;
@@ -103,9 +103,13 @@ public class App extends Application {
 
     private final ProcessDetailsTable processDetailsTable = new ProcessDetailsTable();
 
-    HardwareStatusBar hardwareStatusBar = new HardwareStatusBar();
+    StatusBar statusBar = new StatusBar();
 
     GanttChart ganttChart = new GanttChart();
+
+    private final Button generateAverageWaitingTimeButton = new Button("Generate Average Waiting Time");
+
+    private final Button generateAverageTurnaroundTimeButton = new Button("Generate Average Turnaround Time");
 
     Timeline timeline = new Timeline(
             new KeyFrame(Duration.seconds(1), this::handleTimelineEvent));
@@ -192,6 +196,8 @@ public class App extends Application {
                 addProcessButton.setDisable(false);
                 if (currentSchedulerAlgorithm == SchedulerAlgorithm.RR)
                     rrQuantumSpinBox.setDisable(false);
+                else
+                    rrQuantumSpinBox.setDisable(true);
                 break;
             case PAUSED:
                 startButton.setDisable(true);
@@ -201,6 +207,8 @@ public class App extends Application {
                 addProcessButton.setDisable(false);
                 if (currentSchedulerAlgorithm == SchedulerAlgorithm.RR)
                     rrQuantumSpinBox.setDisable(false);
+                else
+                    rrQuantumSpinBox.setDisable(true);
                 break;
             case RUNNING:
                 startButton.setDisable(true);
@@ -209,6 +217,8 @@ public class App extends Application {
                 continueButton.setDisable(true);
                 addProcessButton.setDisable(false);
                 if (currentSchedulerAlgorithm == SchedulerAlgorithm.RR)
+                    rrQuantumSpinBox.setDisable(true);
+                else
                     rrQuantumSpinBox.setDisable(true);
                 break;
             case INVALID:
@@ -369,6 +379,16 @@ public class App extends Application {
         }
     }
 
+    private void handleGenerateAverageWaitingTimeButtonPress(MouseEvent event) {
+        double averageWaitingTime = algorithmType.getAverageWaitingTime();
+        statusBar.updateAverageWaitingTime(averageWaitingTime);
+    }
+
+    private void handleGenerateAverageTurnaroundTimeButtonPress(MouseEvent event) {
+        double averageTurnaroundTime = algorithmType.getAverageTurnaroundTime();
+        statusBar.updateAverageTurnaroundTime(averageTurnaroundTime);
+    }
+
     @Override
     public void start(Stage stage) throws IOException {
         VBox mainLayout = new VBox();
@@ -411,9 +431,24 @@ public class App extends Application {
 
         processDetailsTable.place(mainLayout);
 
-        hardwareStatusBar.place(mainLayout);
+        statusBar.place(mainLayout);
 
         ganttChart.place(mainLayout);
+
+        generateAverageWaitingTimeButton.setOnMousePressed(this::handleGenerateAverageWaitingTimeButtonPress);
+        generateAverageTurnaroundTimeButton.setOnMousePressed(this::handleGenerateAverageTurnaroundTimeButtonPress);
+
+        HBox schedulersControllers2 = new HBox();
+
+        schedulersControllers2.setSpacing(20);
+
+        VBox.setMargin(schedulersControllers2, new javafx.geometry.Insets(0, 50, 20, 50));
+
+        schedulersControllers2.setAlignment(Pos.CENTER);
+
+        schedulersControllers2.getChildren().addAll(generateAverageWaitingTimeButton, generateAverageTurnaroundTimeButton);
+
+        mainLayout.getChildren().add(schedulersControllers2);
 
         mainLayout.setAlignment(Pos.CENTER);
 

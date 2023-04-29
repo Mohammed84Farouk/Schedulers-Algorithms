@@ -3,6 +3,7 @@ package com.schedulers_algorithms.Preemptive_Priority;
 import java.util.Vector;
 
 import com.schedulers_algorithms.AlgorithmType;
+import com.schedulers_algorithms.App;
 import com.schedulers_algorithms.CPU;
 import com.schedulers_algorithms.CPU.CPUState;
 import com.schedulers_algorithms.Utils.Process;
@@ -17,6 +18,9 @@ public class PreemptivePriority implements AlgorithmType {
     private boolean isPreemptive;
     private Vector<Process> readyQueue;
 
+    private double totalWaitingTime = 0.0;
+    private int processesCount = 0;
+
     private int agingRoundTime = 0;
 
     public PreemptivePriority(boolean isPreemptive) {
@@ -27,6 +31,7 @@ public class PreemptivePriority implements AlgorithmType {
 
  @Override
     public void addProcessToReadyQueue(Process process) {
+        processesCount++;
         switch (cpu.getState()) {
             case IDLE:
                 cpu.switchState(CPUState.BUZY);
@@ -78,6 +83,7 @@ public class PreemptivePriority implements AlgorithmType {
 
     @Override
     public void executeProcess() {
+        int currentTime = App.getCurrentTime();
         agingRoundTime++;
         if (agingRoundTime > 4) {
             ageProcesses();
@@ -87,6 +93,9 @@ public class PreemptivePriority implements AlgorithmType {
         if (cpu.getState() == CPUState.IDLE) {
             if (!hookProcessOnCPUFromReadyQueue())
                 return;
+            else {
+                totalWaitingTime+=currentTime;
+            }    
         }
 
         cpu.getHookedProcess().runProcess(1);
@@ -124,5 +133,15 @@ public class PreemptivePriority implements AlgorithmType {
         for (int i = 0 ; i < readyQueue.size() ; i++) {
             readyQueue.elementAt(i).age();
         }
+    }
+
+    public double getAverageWaitingTime() {
+        return totalWaitingTime / processesCount;
+    }
+
+    @Override
+    public double getAverageTurnaroundTime() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAverageTurnaroundTime'");
     }
 }

@@ -94,4 +94,16 @@ public class FirstComeFirstServed implements AlgorithmType {
 
         return true;
     }
+
+    @Override
+    public double getAverageWaitingTime() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAverageWaitingTime'");
+    }
+
+    @Override
+    public double getAverageTurnaroundTime() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAverageTurnaroundTime'");
+    }
 }

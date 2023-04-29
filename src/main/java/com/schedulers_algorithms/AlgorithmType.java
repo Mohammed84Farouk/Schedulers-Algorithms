@@ -6,4 +6,6 @@ public interface AlgorithmType {
     public Process getCPUHookedProcess();
     public boolean isCPUBuzy();
     public void executeProcess();
+    public double getAverageWaitingTime();
+    public double getAverageTurnaroundTime();
 }

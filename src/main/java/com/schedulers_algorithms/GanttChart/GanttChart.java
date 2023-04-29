@@ -13,7 +13,7 @@ public class GanttChart extends HBox {
         setSpacing(5);
 
         scrollPane.setPrefHeight(200);
-        VBox.setMargin(scrollPane, new javafx.geometry.Insets(0, 50, 20, 50));
+        VBox.setMargin(scrollPane, new javafx.geometry.Insets(0, 50, 0, 50));
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setContent(this);
