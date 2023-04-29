@@ -93,16 +93,16 @@ public class PreemptivePriority implements AlgorithmType {
 
         if (cpu.getState() == CPUState.IDLE) {
             if (!hookProcessOnCPUFromReadyQueue())
-                return;
-            else {
-                totalWaitingTime+=currentTime;
-            }    
+                return;  
         }
 
         cpu.getHookedProcess().runProcess(1);
+        cpu.getHookedProcess().setWaitingTime(cpu.getHookedProcess().getWaitingTime() - 1);
 
         if (cpu.getHookedProcess().isFinished()) {
-            totalTurnaroundTime+=currentTime-cpu.getHookedProcess().getArrivalTime();
+            cpu.getHookedProcess().setTurnAroundTime(currentTime - cpu.getHookedProcess().getArrivalTime() + 1);
+            totalTurnaroundTime += currentTime - cpu.getHookedProcess().getArrivalTime() + 1;
+            totalWaitingTime += cpu.getHookedProcess().getTurnAroundTime() + cpu.getHookedProcess().getWaitingTime();
             cpu.switchState(CPUState.IDLE);
             cpu.unHookProcess();
             hookProcessOnCPUFromReadyQueue();

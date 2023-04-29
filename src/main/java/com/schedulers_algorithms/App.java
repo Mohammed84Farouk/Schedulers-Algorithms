@@ -29,6 +29,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -153,8 +154,10 @@ public class App extends Application {
             if (!(algorithmType instanceof SJFS) || algorithmType instanceof SJFS && accumulativeSeconds >= 1) {
                 Rectangle rectangle = new Rectangle(50, 50);
                 rectangle.setFill(Color.TRANSPARENT);
+                Circle circle = new Circle(4);
+                circle.setFill(Color.BLACK);
                 StackPane stackPane = new StackPane();
-                stackPane.getChildren().addAll(rectangle);
+                stackPane.getChildren().addAll(rectangle, circle);
                 ganttChart.getChildren().add(stackPane);
             }
         }

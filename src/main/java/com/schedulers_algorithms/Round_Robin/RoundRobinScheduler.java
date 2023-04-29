@@ -92,13 +92,11 @@ public class RoundRobinScheduler implements AlgorithmType{
 
     @Override
     public boolean isCPUBuzy() {
-        Process currentProcess;
-        if (!queue1.isEmpty()) {
-            currentProcess = queue1.poll();
+        if (!queue1.isEmpty() || !queue2.isEmpty()) {
+            return true;
         } else {
-            currentProcess = queue2.poll();
+            return false;
         }
-        return currentProcess != null;
     }
 
     public static void main(String[] args) throws InterruptedException {
