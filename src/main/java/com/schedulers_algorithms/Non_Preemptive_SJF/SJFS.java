@@ -43,8 +43,8 @@ public class SJFS implements AlgorithmType {
 
     @Override
     public void executeProcess(){
-        if(currentProcess != null)currentProcess.setBurstTime(currentProcess.getBurstTime()-1);
-        if(currentProcess == null || currentProcess.getBurstTime() == 0){
+        if(currentProcess != null) currentProcess.runProcess(1);
+        if(currentProcess == null || currentProcess.isFinished()){
             if(!getProcessFromReadyQueue()){
                 currentProcess = null;
             }
