@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.scene.control.CheckBox;
 
 import com.schedulers_algorithms.App.SchedulerAlgorithm;
 import com.schedulers_algorithms.Utils.Process;
@@ -23,15 +24,18 @@ public class AddProcessDialog extends Stage {
     private TextField processPriorityField = new TextField();
     private TextField processBurstField = new TextField();
     private ColorPicker processColorPicker = new ColorPicker(Color.RED);
+    private TextField processArrivalField = new TextField();
 
     StringBuilder processPriority;
     StringBuilder processBurst;
     ProcessColor processColor;
+    StringBuilder processArrival;
 
-    public AddProcessDialog(StringBuilder processPriority, StringBuilder processBurst, ProcessColor processColor) {
+    public AddProcessDialog(StringBuilder processPriority, StringBuilder processBurst, ProcessColor processColor, StringBuilder processArrival) {
         this.processPriority = processPriority;
         this.processBurst = processBurst;
         this.processColor = processColor;
+        this.processArrival = processArrival;
     }
 
     private void handleSaveButtonPress(MouseEvent event) {
@@ -39,6 +43,7 @@ public class AddProcessDialog extends Stage {
         processPriority.append(processPriorityField.getText());
         processBurst.append(processBurstField.getText());
         processColor.setColor(processColorPicker.getValue());
+        processArrival.append(processArrivalField.getText());
 
         close();
     }
@@ -80,10 +85,34 @@ public class AddProcessDialog extends Stage {
         processColorLabel.setTextAlignment(TextAlignment.CENTER);
         processColor.getChildren().addAll(processColorLabel, processColorPicker);
 
+        HBox processArrival = new HBox();
+        processArrival.setSpacing(20);
+        VBox.setMargin(processArrival, new javafx.geometry.Insets(0, 10, 20, 10));
+        Label processArrivalLabel = new Label("Process Arrival:");
+        processArrivalLabel.setTextAlignment(TextAlignment.CENTER);
+
+        processArrivalLabel.setDisable(true);
+        processArrivalField.setDisable(true);
+
+        CheckBox checkBox = new CheckBox();
+
+        
+        checkBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                processArrivalLabel.setDisable(false);
+                processArrivalField.setDisable(false);
+            } else {
+                processArrivalLabel.setDisable(true);
+                processArrivalField.setDisable(true);
+            }
+        });
+
+        processArrival.getChildren().addAll(processArrivalLabel, processArrivalField, checkBox);
+
         Button saveButton = new Button("Save");
         saveButton.setOnMousePressed(this::handleSaveButtonPress);
 
-        mainLayout.getChildren().addAll(processBurst, processColor, saveButton);
+        mainLayout.getChildren().addAll(processBurst, processColor, processArrival, saveButton);
 
         Scene addProcessDialogScene = new Scene(mainLayout, 320, 240);
 

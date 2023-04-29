@@ -154,7 +154,7 @@ public class App extends Application {
             if (!(algorithmType instanceof SJFS) || algorithmType instanceof SJFS && accumulativeSeconds >= 1) {
                 Rectangle rectangle = new Rectangle(50, 50);
                 rectangle.setFill(Color.TRANSPARENT);
-                Circle circle = new Circle(4);
+                Circle circle = new Circle(3);
                 circle.setFill(Color.BLACK);
                 StackPane stackPane = new StackPane();
                 stackPane.getChildren().addAll(rectangle, circle);
@@ -251,8 +251,6 @@ public class App extends Application {
 
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
-
-        // TODO
     }
 
     private void handleStopButtonPress(MouseEvent event) {
@@ -260,8 +258,6 @@ public class App extends Application {
         updateLook();
 
         timeline.stop();
-
-        // TODO
     }
 
     private void handlePauseButtonPress(MouseEvent event) {
@@ -269,8 +265,6 @@ public class App extends Application {
         updateLook();
 
         timeline.pause();
-
-        // TODO
     }
 
     private void handleContinueButtonPress(MouseEvent event) {
@@ -278,8 +272,6 @@ public class App extends Application {
         updateLook();
 
         timeline.play();
-
-        // TODO
     }
 
     private void handleAddProcessButtonPress(MouseEvent event) {
@@ -289,7 +281,9 @@ public class App extends Application {
         StringBuilder processPriority = new StringBuilder();
         StringBuilder processBurst = new StringBuilder();
         ProcessColor processColor = new ProcessColor(Color.RED);
-        AddProcessDialog addProcessDialog = new AddProcessDialog(processPriority, processBurst, processColor);
+        StringBuilder processArrival = new StringBuilder();
+        AddProcessDialog addProcessDialog = new AddProcessDialog(processPriority, processBurst, processColor,
+                processArrival);
 
         addProcessDialog.showDialog(currentSchedulerAlgorithm);
 
@@ -308,14 +302,14 @@ public class App extends Application {
                 || currentSchedulerAlgorithm == SchedulerAlgorithm.NON_PREEMPTIVE_PRIORITY) {
             process = new Process(
                     processesIdTracker++,
-                    accumulativeSeconds,
+                    (processArrival.length() == 0) ? accumulativeSeconds : Integer.parseInt(processArrival.toString()),
                     Integer.parseInt(processBurst.toString()),
                     Integer.parseInt(processPriority.toString()),
                     processColor.getColor());
         } else {
             process = new Process(
                     processesIdTracker++,
-                    accumulativeSeconds,
+                    (processArrival.length() == 0) ? accumulativeSeconds : Integer.parseInt(processArrival.toString()),
                     Integer.parseInt(processBurst.toString()),
                     processColor.getColor());
         }
@@ -457,7 +451,8 @@ public class App extends Application {
 
         schedulersControllers2.setAlignment(Pos.CENTER);
 
-        schedulersControllers2.getChildren().addAll(generateAverageWaitingTimeButton, generateAverageTurnaroundTimeButton);
+        schedulersControllers2.getChildren().addAll(generateAverageWaitingTimeButton,
+                generateAverageTurnaroundTimeButton);
 
         mainLayout.getChildren().add(schedulersControllers2);
 
