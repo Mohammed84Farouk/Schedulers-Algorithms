@@ -309,6 +309,10 @@ public class App extends Application {
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.PREEMPTIVE_PRIORITY);
                 break;
             case PREEMPTIVE_SJF:
+                algorithmType = new SJFS(true);
+                currentSchedulerState = SchedulerState.INITIALIZATION;
+                updateLook();
+                processDetailsTable.switchAlgorithm(SchedulerAlgorithm.NON_PREEMPTIVE_SJF);
                 break;
             case RR:
                 algorithmType = new RoundRobinScheduler(2);
