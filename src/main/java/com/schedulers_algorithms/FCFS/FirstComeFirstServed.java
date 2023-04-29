@@ -11,9 +11,12 @@ public class FirstComeFirstServed implements AlgorithmType {
     private CPU cpu;
 
     private Vector<Process> readyQueue;
-
+    private Vector<Process> queue1;
+    private Vector<Process> queue2;
     public FirstComeFirstServed() {
         cpu = new CPU();
+        queue1= new Vector<Process>();
+        queue2= new Vector<Process>();
         readyQueue = new Vector<Process>();
     }
 
