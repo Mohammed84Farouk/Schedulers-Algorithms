@@ -270,6 +270,10 @@ public class App extends Application {
             case FCFS:
                 break;
             case NON_PREEMPTIVE_PRIORITY:
+                algorithmType = new PreemptivePriority(false);
+                currentSchedulerState = SchedulerState.INITIALIZATION;
+                updateLook();
+                processDetailsTable.switchAlgorithm(SchedulerAlgorithm.NON_PREEMPTIVE_PRIORITY);
                 break;
             case NON_PREEMPTIVE_SJF:
                 algorithmType = new SJFS(false);
@@ -278,7 +282,7 @@ public class App extends Application {
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.NON_PREEMPTIVE_SJF);
                 break;
             case PREEMPTIVE_PRIORITY:
-                algorithmType = new PreemptivePriority();
+                algorithmType = new PreemptivePriority(true);
                 currentSchedulerState = SchedulerState.INITIALIZATION;
                 updateLook();
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.PREEMPTIVE_PRIORITY);
