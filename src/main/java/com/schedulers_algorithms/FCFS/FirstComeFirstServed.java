@@ -55,8 +55,8 @@ public class FirstComeFirstServed implements AlgorithmType {
     }
 
     @Override
-    public boolean isCPUBusy() {
-        return cpu.isBusy();
+    public boolean isCPUBuzy() {
+        return cpu.isBuzy();
     }
 
     @Override
@@ -91,13 +91,13 @@ public class FirstComeFirstServed implements AlgorithmType {
 
         if (highestPriorityProcessIndex != Integer.MAX_VALUE) {
             cpu.hookProcess(readyQueue.elementAt(highestPriorityProcessIndex));
-            cpu.switchState(CPUState.BUSY);
+            cpu.switchState(CPUState.BUZY);
             readyQueue.removeElementAt(highestPriorityProcessIndex);
         }
 
         return true;
     }
-    
+
     public double getAverageWaitingTime() {
         int totalWaitingTime = 0;
         int numProcesses = 0;
