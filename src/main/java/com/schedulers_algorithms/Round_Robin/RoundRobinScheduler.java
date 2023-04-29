@@ -52,6 +52,33 @@ public class RoundRobinScheduler implements AlgorithmType{
             }
         }
     }
+    public double getAverageWaitingTime() {
+        int totalWaitingTime = 0;
+        int numProcesses = 0;
+        for (Process p : queue1) {
+            totalWaitingTime += p.getWaitingTime();
+            numProcesses++;
+        }
+        for (Process p : queue2) {
+            totalWaitingTime += p.getWaitingTime();
+            numProcesses++;
+        }
+        return (double) totalWaitingTime / numProcesses;
+    }
+    
+    public double getAverageTurnaroundTime() {
+        int totalTurnaroundTime = 0;
+        int numProcesses = 0;
+        for (Process p : queue1) {
+            totalTurnaroundTime += p.getTurnAroundTime();
+            numProcesses++;
+        }
+        for (Process p : queue2) {
+            totalTurnaroundTime += p.getTurnAroundTime();
+            numProcesses++;
+        }
+        return (double) totalTurnaroundTime / numProcesses;
+    }
     @Override
     public Process getCPUHookedProcess() {
         Process currentProcess;

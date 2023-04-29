@@ -3,6 +3,7 @@ package com.schedulers_algorithms;
 import com.schedulers_algorithms.Add_Process_Dialog.AddProcessDialog;
 import com.schedulers_algorithms.Dropdown_Button.DropdownButton;
 import com.schedulers_algorithms.GanttChart.GanttChart;
+import com.schedulers_algorithms.HardwareStatusBar.HardwareStatusBar;
 import com.schedulers_algorithms.Icons.*;
 import com.schedulers_algorithms.FCFS.FirstComeFirstServed;
 import com.schedulers_algorithms.Round_Robin.RoundRobinScheduler;
@@ -96,6 +97,8 @@ public class App extends Application {
     private final DropdownButton dropdownButton = new DropdownButton();
 
     private final ProcessDetailsTable processDetailsTable = new ProcessDetailsTable();
+
+    HardwareStatusBar hardwareStatusBar = new HardwareStatusBar();
 
     GanttChart ganttChart = new GanttChart();
 
@@ -361,6 +364,8 @@ public class App extends Application {
         dropdownButton.place(mainLayout);
 
         processDetailsTable.place(mainLayout);
+
+        hardwareStatusBar.place(mainLayout);
 
         ganttChart.place(mainLayout);
 
