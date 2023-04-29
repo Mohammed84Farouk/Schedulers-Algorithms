@@ -27,9 +27,13 @@ public class ProcessDetailsTable extends TableView<String[]> {
             case NONE:
                 resetTable();
                 break;
-            case FCFS:
+            case FCFS:                          // TODO
+                resetTable();
+                setupFCFS();
                 break;
-            case NON_PREEMPTIVE_PRIORITY:
+            case NON_PREEMPTIVE_PRIORITY:       // TODO
+                resetTable();
+                setupNonPreemptivePriority();
                 break;
             case NON_PREEMPTIVE_SJF:
                 resetTable();
@@ -39,15 +43,71 @@ public class ProcessDetailsTable extends TableView<String[]> {
                 resetTable();
                 setupPreemptivePriority();
                 break;
-            case PREEMPTIVE_SJF:
+            case PREEMPTIVE_SJF:                // TODO
+                resetTable();
+                setupPreemptiveSJF();
                 break;
-            case RR:
+            case RR:                            // TODO
+                resetTable();
+                setupRoundRobin();
                 break;
             default:
                 break;
         }
     }
+    private void resetTable() {
+        getItems().clear();
+        getColumns().clear();
+    }
+    private void setupFCFS(){
+        List<TableColumn<String[], ?>> columns = new ArrayList<>();
 
+        TableColumn<String[], String> processColumn = new TableColumn<>("Process");
+        processColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()[0]));
+        processColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        columns.add(processColumn);
+
+        TableColumn<String[], String> arrivalTimeColumn = new TableColumn<>("Arrival Time");
+        arrivalTimeColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()[1]));
+        arrivalTimeColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        columns.add(arrivalTimeColumn);
+
+        TableColumn<String[], String> burstTimeColumn = new TableColumn<>("Burst Time");
+        burstTimeColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()[2]));
+        burstTimeColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        columns.add(burstTimeColumn);
+
+        setItems(data);
+
+        getColumns().addAll(columns);
+    }
+    private void setupNonPreemptivePriority(){
+        List<TableColumn<String[], ?>> columns = new ArrayList<>();
+
+        TableColumn<String[], String> processColumn = new TableColumn<>("Process");
+        processColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()[0]));
+        processColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        columns.add(processColumn);
+
+        TableColumn<String[], String> arrivalTimeColumn = new TableColumn<>("Arrival Time");
+        arrivalTimeColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()[1]));
+        arrivalTimeColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        columns.add(arrivalTimeColumn);
+
+        TableColumn<String[], String> burstTimeColumn = new TableColumn<>("Burst Time");
+        burstTimeColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()[2]));
+        burstTimeColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        columns.add(burstTimeColumn);
+
+        TableColumn<String[], String> priorityColumn = new TableColumn<>("Priority");
+        priorityColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()[3]));
+        priorityColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        columns.add(priorityColumn);
+
+        setItems(data);
+
+        getColumns().addAll(columns);
+    }
     private void setupNonPreemptiveSJF() {
         List<TableColumn<String[], ?>> columns = new ArrayList<>();
 
@@ -70,12 +130,6 @@ public class ProcessDetailsTable extends TableView<String[]> {
 
         getColumns().addAll(columns);
     }
-
-    private void resetTable() {
-        getItems().clear();
-        getColumns().clear();
-    }
-
     private void setupPreemptivePriority() {
         List<TableColumn<String[], ?>> columns = new ArrayList<>();
 
@@ -103,7 +157,50 @@ public class ProcessDetailsTable extends TableView<String[]> {
 
         getColumns().addAll(columns);
     }
+    private void setupPreemptiveSJF() {
+        List<TableColumn<String[], ?>> columns = new ArrayList<>();
 
+        TableColumn<String[], String> processColumn = new TableColumn<>("Process");
+        processColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()[0]));
+        processColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        columns.add(processColumn);
+
+        TableColumn<String[], String> arrivalTimeColumn = new TableColumn<>("Arrival Time");
+        arrivalTimeColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()[1]));
+        arrivalTimeColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        columns.add(arrivalTimeColumn);
+
+        TableColumn<String[], String> burstTimeColumn = new TableColumn<>("Burst Time");
+        burstTimeColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()[2]));
+        burstTimeColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        columns.add(burstTimeColumn);
+
+        setItems(data);
+
+        getColumns().addAll(columns);
+    }
+    private void setupRoundRobin(){
+        List<TableColumn<String[], ?>> columns = new ArrayList<>();
+
+        TableColumn<String[], String> processColumn = new TableColumn<>("Process");
+        processColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()[0]));
+        processColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        columns.add(processColumn);
+
+        TableColumn<String[], String> arrivalTimeColumn = new TableColumn<>("Arrival Time");
+        arrivalTimeColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()[1]));
+        arrivalTimeColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        columns.add(arrivalTimeColumn);
+
+        TableColumn<String[], String> burstTimeColumn = new TableColumn<>("Burst Time");
+        burstTimeColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()[2]));
+        burstTimeColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        columns.add(burstTimeColumn);
+
+        setItems(data);
+
+        getColumns().addAll(columns);
+    }
     public void addProcess(SchedulerAlgorithm algorithm, Process process) {
         switch (algorithm) {
             case NONE:

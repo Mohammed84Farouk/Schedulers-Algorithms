@@ -3,6 +3,7 @@ package com.schedulers_algorithms;
 import com.schedulers_algorithms.Non_Preemptive_SJF.SJFS;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
@@ -131,8 +132,18 @@ public class App extends Application {
             Rectangle rectangle = new Rectangle(50, 50);
             rectangle.setFill(algorithmType.getCPUHookedProcess().getColor());
             Label label = new Label("P"+Integer.toString(algorithmType.getCPUHookedProcess().getId()));
+
+            HBox hbox = new HBox();
+            hbox.setSpacing(0);                                // spacing between each box carrying the lines and label2
+            Line line = new Line(0, 0, 0, 30);
+            line.setStrokeWidth(1);                            // thickness
+            hbox.getChildren().add(line);
+            Label label2 = new Label(Integer.toString(accumulativeSeconds+1));
+            label2.setTranslateY(35);
+            hbox.getChildren().add(label2);
+
             StackPane stackPane = new StackPane();
-            stackPane.getChildren().addAll(rectangle, label);
+            stackPane.getChildren().addAll(rectangle, label, hbox);
             ganttChart.getChildren().add(stackPane);
 
             ganttChart.adjustView(); // TODO fix here
