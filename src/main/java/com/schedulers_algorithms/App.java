@@ -112,7 +112,7 @@ public class App extends Application {
     int tempX=50, lastProcess=-1, lastTime=0;
     Color lastColor;
     private void handleTimelineEvent(ActionEvent event) {
-        if (algorithmType.isCPUBusy()) {
+        if (algorithmType.isCPUBuzy()) {
             Label label = new Label("P"+lastProcess);
             if(lastProcess==-1) {
                 lastProcess = algorithmType.getCPUHookedProcess().getId();
@@ -145,7 +145,7 @@ public class App extends Application {
             ganttChart.getChildren().add(stackPane);
         }
 
-        algorithmType.runProcess();
+        algorithmType.executeProcess();
 
         accumulativeSeconds++;
         String hoursStr = String.format("%02d", (accumulativeSeconds / 3600));

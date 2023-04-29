@@ -29,10 +29,10 @@ public class PreemptivePriority implements AlgorithmType {
     public void addProcessToReadyQueue(Process process) {
         switch (cpu.getState()) {
             case IDLE:
-                cpu.switchState(CPUState.BUSY);
+                cpu.switchState(CPUState.BUZY);
                 cpu.hookProcess(process);
                 return;
-            case BUSY:
+            case BUZY:
                 if(isPreemptive){
                     hookProcessOnCPUIfHigherPriority(process);
                     return;
@@ -72,12 +72,12 @@ public class PreemptivePriority implements AlgorithmType {
     }
 
     @Override
-    public boolean isCPUBusy() {
-        return cpu.isBusy();
+    public boolean isCPUBuzy() {
+        return cpu.isBuzy();
     }
 
     @Override
-    public void runProcess() {
+    public void executeProcess() {
         agingRoundTime++;
         if (agingRoundTime > 4) {
             ageProcesses();
@@ -113,7 +113,7 @@ public class PreemptivePriority implements AlgorithmType {
 
         if (highestPriorityProcessIndex != Integer.MAX_VALUE) {
             cpu.hookProcess(readyQueue.elementAt(highestPriorityProcessIndex));
-            cpu.switchState(CPUState.BUSY);
+            cpu.switchState(CPUState.BUZY);
             readyQueue.removeElementAt(highestPriorityProcessIndex);
         }
 

@@ -57,7 +57,7 @@ public class FirstComeFirstServed implements AlgorithmType {
     }
 
     @Override
-    public void runProcess() {
+    public void executeProcess() {
         if (cpu.getState() == CPUState.IDLE) {
             if (!hookProcessOnCPUFromReadyQueue())
                 return;

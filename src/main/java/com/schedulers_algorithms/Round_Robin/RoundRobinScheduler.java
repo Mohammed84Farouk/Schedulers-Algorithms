@@ -18,10 +18,13 @@ public class RoundRobinScheduler implements AlgorithmType{
         this.timeQuantum = timeQuantum;
     }
 
+    @Override
     public void addProcessToReadyQueue(Process process) {
         queue1.add(process);
     }
-    public void runProcess() {
+
+    @Override
+    public void executeProcess() {
         int time = 0;
         while (!queue1.isEmpty() || !queue2.isEmpty()) {
             Process currentProcess;
@@ -61,7 +64,7 @@ public class RoundRobinScheduler implements AlgorithmType{
     }
 
     @Override
-    public boolean isCPUBusy() {
+    public boolean isCPUBuzy() {
         Process currentProcess;
         if (!queue1.isEmpty()) {
             currentProcess = queue1.poll();
@@ -79,6 +82,6 @@ public class RoundRobinScheduler implements AlgorithmType{
         scheduler.addProcessToReadyQueue(p1);
         scheduler.addProcessToReadyQueue(p2);
         scheduler.addProcessToReadyQueue(p3);
-        scheduler.runProcess();
+        scheduler.executeProcess();
     }
 }

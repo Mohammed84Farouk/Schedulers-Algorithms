@@ -37,11 +37,12 @@ public class SJFS implements AlgorithmType {
     }
 
     @Override
-    public boolean isCPUBusy() {
+    public boolean isCPUBuzy() {
         return currentProcess != null;
     }
 
-    public void runProcess(){
+    @Override
+    public void executeProcess(){
         if(currentProcess != null)currentProcess.setBurstTime(currentProcess.getBurstTime()-1);
         if(currentProcess == null || currentProcess.getBurstTime() == 0){
             if(!getProcessFromReadyQueue()){
