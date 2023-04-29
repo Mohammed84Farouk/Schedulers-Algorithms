@@ -53,7 +53,17 @@ public class SJFS implements AlgorithmType {
     @Override
     public void executeProcess() {
         if (currentProcess != null) {
-            if (!isPreemptive) currentProcess.runProcess(1);
+            if (!isPreemptive){
+                if(currentProcess.getBurstTime() == 1){
+                    int currentTime = getCurrentTime();
+                    currentProcess.setTurnAroundTime(currentTime - currentProcess.getArrivalTime());
+                    currentProcess.setWaitingTime(currentProcess.getTurnAroundTime()-1 + currentProcess.getWaitingTime());
+                    this.AverageWaitingTime += currentProcess.getWaitingTime();
+                    this.AverageTurnAroundTime += (currentTime - currentProcess.getArrivalTime());
+                }
+                currentProcess.runProcess(1);
+                currentProcess.setWaitingTime(currentProcess.getWaitingTime()-1);
+            }
             else {
                 currentProcess.runProcess(1);
                 currentProcess.setWaitingTime(currentProcess.getWaitingTime() - 1); // Same here
@@ -92,10 +102,7 @@ public class SJFS implements AlgorithmType {
 
         //Logic according to the type of SJF scheduler
         if (!isPreemptive) {
-            currentProcess.setWaitingTime(currentTime - currentProcess.getArrivalTime());
-            currentProcess.setTurnAroundTime(currentTime - currentProcess.getArrivalTime());
-            this.AverageWaitingTime += currentProcess.getWaitingTime();
-            this.AverageTurnAroundTime += (currentTime - currentProcess.getArrivalTime());
+
             processesB.remove(currentProcess);
             return true;
         } else {
