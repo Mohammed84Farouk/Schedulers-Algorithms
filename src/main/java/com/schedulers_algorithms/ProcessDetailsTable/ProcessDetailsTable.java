@@ -206,6 +206,11 @@ public class ProcessDetailsTable extends TableView<String[]> {
             case NONE:
                 break;
             case FCFS:
+                data.add(new String[] {
+                    "P"+Integer.toString(process.getId()),
+                        String.valueOf(process.getArrivalTime()),
+                        String.valueOf(process.getBurstTime()),
+                        String.valueOf(process.getPriority()) });
                 break;
             case NON_PREEMPTIVE_PRIORITY:
                 break;
@@ -221,6 +226,11 @@ public class ProcessDetailsTable extends TableView<String[]> {
             case PREEMPTIVE_SJF:
                 break;
             case RR:
+                data.add(new String[] {
+                    "P"+Integer.toString(process.getId()),
+                        String.valueOf(process.getArrivalTime()),
+                        String.valueOf(process.getBurstTime()),
+                        String.valueOf(process.getPriority()) });
                 break;
             default:
                 break;
