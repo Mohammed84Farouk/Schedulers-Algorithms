@@ -21,10 +21,10 @@ import com.schedulers_algorithms.Utils.Process;
 import com.schedulers_algorithms.Utils.ProcessColor;
 
 public class AddProcessDialog extends Stage {
-    private TextField processPriorityField = new TextField();
-    private TextField processBurstField = new TextField();
-    private ColorPicker processColorPicker = new ColorPicker(Color.RED);
-    private TextField processArrivalField = new TextField();
+    private final TextField processPriorityField = new TextField();
+    private final TextField processBurstField = new TextField();
+    private final ColorPicker processColorPicker = new ColorPicker(Color.RED);
+    private final TextField processArrivalField = new TextField();
 
     StringBuilder processPriority;
     StringBuilder processBurst;

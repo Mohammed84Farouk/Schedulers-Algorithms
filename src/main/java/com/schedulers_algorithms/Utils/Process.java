@@ -5,14 +5,14 @@ import javafx.scene.paint.Paint;
 
 public class Process {
 
-	private int id;
-    private int arrivalTime;
+	private final int id;
+    private final int arrivalTime;
     private int burstTime;
     private int priority;
     private int waitingTime;
     private int turnAroundTime;
     private int lastQueue;
-	private Color color;
+	private final Color color;
 
     public Process(int id, int arrivalTime, int burstTime, int priority, Color color) {
         this.id = id;
