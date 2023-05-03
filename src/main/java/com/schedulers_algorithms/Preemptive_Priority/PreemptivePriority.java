@@ -205,8 +205,8 @@ public class PreemptivePriority implements AlgorithmType {
                     && readyQueue.elementAt(i).getArrivalTime() <= currentTime + 1
                     || readyQueue.elementAt(i).getPriority() == highestPriorityProcessValue
                     && readyQueue.elementAt(i).isPreempted()) {
-                        if (readyQueue.elementAt(i).getPriority() == highestPriorityProcessValue
-                        && readyQueue.elementAt(i).isPreempted()) System.out.println("yeeeeeeeeeeeeeeeah!!!!!");
+                        // if (readyQueue.elementAt(i).getPriority() == highestPriorityProcessValue
+                        // && readyQueue.elementAt(i).isPreempted()) System.out.println("yeeeeeeeeeeeeeeeah!!!!!");
                 highestPriorityProcessIndex = i;
                 highestPriorityProcessValue = readyQueue.elementAt(i).getPriority();
             }
