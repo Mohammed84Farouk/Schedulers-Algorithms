@@ -12,6 +12,7 @@ public class Process {
     private int waitingTime;
     private int turnAroundTime;
     private int lastQueue;
+    private boolean isPreempted = false;
 	private final Color color;
 
     public Process(int id, int arrivalTime, int burstTime, int priority, Color color) {
@@ -51,6 +52,14 @@ public class Process {
 
     public void setBurstTime(int burstTime) {
         this.burstTime = burstTime;
+    }
+
+    public boolean isPreempted() {
+        return isPreempted;
+    }
+
+    public void setPreempted(boolean isPreempted) {
+        this.isPreempted = isPreempted;
     }
 
     public int getBurstTime() {

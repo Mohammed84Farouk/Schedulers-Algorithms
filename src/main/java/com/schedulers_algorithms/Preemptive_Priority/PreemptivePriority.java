@@ -44,7 +44,7 @@ public class PreemptivePriority implements AlgorithmType {
 
     @Override
     public void addProcessToReadyQueue(Process process) {
-        System.out.println("addProcessToReadyQueue:getArrivalTime: " + process.getArrivalTime());
+        //System.out.println("addProcessToReadyQueue:getArrivalTime: " + process.getArrivalTime());
         processesCount++;
         currentTime = App.getCurrentTime(); // Comment this line before running tests
         switch (cpu.getState()) {
@@ -80,7 +80,9 @@ public class PreemptivePriority implements AlgorithmType {
          * 
          */
         if (process.getPriority() < cpu.getHookedProcessPriority()) {
+            cpu.getHookedProcess().setPreempted(true);
             hookProcessOnReadyQueue(cpu.getHookedProcess());
+            cpu.unHookProcess();
             cpu.hookProcess(process);
         } else {
             hookProcessOnReadyQueue(process);
@@ -137,7 +139,7 @@ public class PreemptivePriority implements AlgorithmType {
     public void executeProcess() {
         currentTime = App.getCurrentTime(); // Comment this line before running tests
 
-        System.out.println("executeProcess:currentTime: " + currentTime);
+        //System.out.println("executeProcess:currentTime: " + currentTime);
 
         checkFutureArrivalProcessesInReadyQueue(currentTime);
 
@@ -153,7 +155,7 @@ public class PreemptivePriority implements AlgorithmType {
         }
 
         if (cpu.getState() == CPUState.IDLE) {
-            System.out.println("executeProcess:enteredIDLEIf");
+            //System.out.println("executeProcess:enteredIDLEIf");
             if (!hookProcessOnCPUFromReadyQueue(currentTime))
                 return;
         }
@@ -200,7 +202,11 @@ public class PreemptivePriority implements AlgorithmType {
         int highestPriorityProcessIndex = Integer.MAX_VALUE;
         for (int i = 0; i < readyQueue.size(); i++) {
             if (readyQueue.elementAt(i).getPriority() < highestPriorityProcessValue
-                    && readyQueue.elementAt(i).getArrivalTime() <= currentTime + 1) {
+                    && readyQueue.elementAt(i).getArrivalTime() <= currentTime + 1
+                    || readyQueue.elementAt(i).getPriority() == highestPriorityProcessValue
+                    && readyQueue.elementAt(i).isPreempted()) {
+                        if (readyQueue.elementAt(i).getPriority() == highestPriorityProcessValue
+                        && readyQueue.elementAt(i).isPreempted()) System.out.println("yeeeeeeeeeeeeeeeah!!!!!");
                 highestPriorityProcessIndex = i;
                 highestPriorityProcessValue = readyQueue.elementAt(i).getPriority();
             }
