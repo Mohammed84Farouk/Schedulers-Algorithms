@@ -46,8 +46,7 @@ public class PreemptivePriority implements AlgorithmType {
     public void addProcessToReadyQueue(Process process) {
         System.out.println("addProcessToReadyQueue:getArrivalTime: " + process.getArrivalTime());
         processesCount++;
-        // int currentTime = App.getCurrentTime(); // Comment this line before running
-        // tests
+        currentTime = App.getCurrentTime(); // Comment this line before running tests
         switch (cpu.getState()) {
             case IDLE:
                 if (process.getArrivalTime() <= currentTime) {
@@ -136,8 +135,7 @@ public class PreemptivePriority implements AlgorithmType {
 
     @Override
     public void executeProcess() {
-        // int currentTime = App.getCurrentTime(); // Comment this line before running
-        // tests
+        currentTime = App.getCurrentTime(); // Comment this line before running tests
 
         System.out.println("executeProcess:currentTime: " + currentTime);
 
