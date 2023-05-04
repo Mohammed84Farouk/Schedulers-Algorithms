@@ -133,10 +133,13 @@ public class AddProcessDialog extends Stage {
         processArrivalHBox.getChildren().addAll(processArrivalLabel, processArrivalSpinner, checkBox);
         processArrival.setValue(processArrivalSpinner.getValue().toString());
 
+        HBox saveButtonHBox = new HBox();
+        saveButtonHBox.setAlignment(Pos.CENTER);
         Button saveButton = new Button("Save");
         saveButton.setOnMousePressed(this::handleSaveButtonPress);
+        saveButtonHBox.getChildren().add(saveButton);
 
-        mainLayout.getChildren().addAll(processBurstHBox, processColorHBox, processArrivalHBox, saveButton);
+        mainLayout.getChildren().addAll(processBurstHBox, processColorHBox, processArrivalHBox, saveButtonHBox);
 
         Scene addProcessDialogScene = new Scene(mainLayout, 320, 240);
 
