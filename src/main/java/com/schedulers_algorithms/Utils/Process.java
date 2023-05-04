@@ -5,15 +5,19 @@ import javafx.scene.paint.Paint;
 
 public class Process {
 
-	private final int id;
-    private final int arrivalTime;
+	private int id;
+    private int arrivalTime;
     private int burstTime;
     private int priority;
     private int waitingTime;
     private int turnAroundTime;
     private int lastQueue;
+<<<<<<< HEAD
     private boolean isPreempted = false;
 	private final Color color;
+=======
+	private Color color;
+>>>>>>> parent of 055c2b3 (updated tables, processes, and exceptions)
 
     public Process(int id, int arrivalTime, int burstTime, int priority, Color color) {
         this.id = id;
