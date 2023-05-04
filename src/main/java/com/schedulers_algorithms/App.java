@@ -129,7 +129,9 @@ public class App extends Application {
     Color lastColor;
 
     private void handleTimelineEvent(ActionEvent event) {
-        if (algorithmType.isCPUBuzy()) {
+        if(algorithmType instanceof RoundRobinScheduler) algorithmType.executeProcess();
+
+        else if (algorithmType.isCPUBuzy()) {
             Label label = new Label("P" + lastProcess);
             if (lastProcess == -1) {
                 lastProcess = algorithmType.getCPUHookedProcess().getId();
