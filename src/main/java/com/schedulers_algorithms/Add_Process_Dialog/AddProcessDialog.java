@@ -39,19 +39,26 @@ public class AddProcessDialog extends Stage {
     BooleanWrapper isFutureProcess;
     StringWrapper processArrival;
 
+    private SchedulerAlgorithm algorithm;
 
-    public AddProcessDialog(BooleanWrapper isSaved, StringWrapper processPriority, StringWrapper processBurst, ProcessColor processColor, BooleanWrapper isFutureProcess,StringWrapper processArrival) {
+    public AddProcessDialog(SchedulerAlgorithm algorithm, BooleanWrapper isSaved, StringWrapper processPriority,
+            StringWrapper processBurst, ProcessColor processColor, BooleanWrapper isFutureProcess,
+            StringWrapper processArrival) {
         this.isSaved = isSaved;
         this.processPriority = processPriority;
         this.processBurst = processBurst;
         this.processColor = processColor;
         this.isFutureProcess = isFutureProcess;
         this.processArrival = processArrival;
+
+        this.algorithm = algorithm;
     }
 
     private void handleSaveButtonPress(MouseEvent event) {
 
-        processPriority.setValue(processPrioritySpinner.getValue().toString());
+        if (algorithm == SchedulerAlgorithm.PREEMPTIVE_PRIORITY
+                || algorithm == SchedulerAlgorithm.NON_PREEMPTIVE_PRIORITY)
+            processPriority.setValue(processPrioritySpinner.getValue().toString());
         processBurst.setValue(processBurstSpinner.getValue().toString());
         processColor.setColor(processColorPicker.getValue());
         processArrival.setValue(processArrivalSpinner.getValue().toString());
@@ -61,7 +68,7 @@ public class AddProcessDialog extends Stage {
         close();
     }
 
-    public void showDialog(SchedulerAlgorithm algorithm) {
+    public void showDialog() {
         initModality(Modality.APPLICATION_MODAL);
         setTitle("Add Process");
 
@@ -75,7 +82,8 @@ public class AddProcessDialog extends Stage {
             VBox.setMargin(processPriorityHBox, new javafx.geometry.Insets(10, 10, 0, 10));
             Label processPriorityLabel = new Label("Process Priority:");
             processPriorityLabel.setTextAlignment(TextAlignment.CENTER);
-            SpinnerValueFactory<Integer> processPrioritySpinnerFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 7, 0, 1);
+            SpinnerValueFactory<Integer> processPrioritySpinnerFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
+                    0, 7, 0, 1);
             processPrioritySpinner.setValueFactory(processPrioritySpinnerFactory);
             processPriorityHBox.getChildren().addAll(processPriorityLabel, processPrioritySpinner);
 
@@ -93,7 +101,8 @@ public class AddProcessDialog extends Stage {
             VBox.setMargin(processBurstHBox, new javafx.geometry.Insets(10, 10, 0, 10));
         Label processBurstLabel = new Label("Process Burst:");
         processBurstLabel.setTextAlignment(TextAlignment.CENTER);
-        SpinnerValueFactory<Integer> processBurstSpinnerFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 50, 1, 1);
+        SpinnerValueFactory<Integer> processBurstSpinnerFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,
+                50, 1, 1);
         processBurstSpinner.setValueFactory(processBurstSpinnerFactory);
         processBurstHBox.getChildren().addAll(processBurstLabel, processBurstSpinner);
         processBurst.setValue(processBurstSpinner.getValue().toString());
@@ -120,7 +129,7 @@ public class AddProcessDialog extends Stage {
             if (newVal) {
                 processArrivalLabel.setDisable(false);
                 processArrivalSpinner.setDisable(false);
-                
+
             } else {
                 processArrivalLabel.setDisable(true);
                 processArrivalSpinner.setDisable(true);
@@ -128,7 +137,8 @@ public class AddProcessDialog extends Stage {
             isFutureProcess.setValue(newVal);
         });
 
-        SpinnerValueFactory<Integer> processArrivalSpinnerFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0, 1);
+        SpinnerValueFactory<Integer> processArrivalSpinnerFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
+                0, 100, 0, 1);
         processArrivalSpinner.setValueFactory(processArrivalSpinnerFactory);
         processArrivalHBox.getChildren().addAll(processArrivalLabel, processArrivalSpinner, checkBox);
         processArrival.setValue(processArrivalSpinner.getValue().toString());
