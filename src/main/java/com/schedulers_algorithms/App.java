@@ -131,7 +131,7 @@ public class App extends Application {
     private void handleTimelineEvent(ActionEvent event) {
         // if(algorithmType instanceof RoundRobinScheduler) algorithmType.executeProcess();
 
-        if (algorithmType.isCPUBuzy()) {
+        if (algorithmType.isCPUBuzy() && algorithmType.getCPUHookedProcess().getArrivalTime() <= accumulativeSeconds) {
             Label label = new Label("P" + lastProcess);
             if (lastProcess == -1) {
                 lastProcess = algorithmType.getCPUHookedProcess().getId();
