@@ -21,6 +21,7 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -36,6 +37,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.Alert.AlertType;
 
 import java.io.IOException;
 
@@ -123,7 +125,7 @@ public class App extends Application {
      * 
      * Timer function.
      */
-    int tempX = 50, lastProcess = -1, lastTime = 0, Fathy = -1;
+    int tempX = 50, lastProcess = -1, lastTime = 0;
     Color lastColor;
 
     private void handleTimelineEvent(ActionEvent event) {
@@ -151,7 +153,7 @@ public class App extends Application {
             lastProcess = -1;
             tempX = 50;
         } else { // ready queue is empty and we're still counting
-            if (!(algorithmType instanceof SJFS) || algorithmType instanceof SJFS && accumulativeSeconds >= 1) {
+            if (!(algorithmType instanceof SJFS) || accumulativeSeconds >= 1) {
                 Rectangle rectangle = new Rectangle(50, 50);
                 rectangle.setFill(Color.TRANSPARENT);
                 Circle circle = new Circle(3);
@@ -197,10 +199,7 @@ public class App extends Application {
                 pauseButton.setDisable(true);
                 continueButton.setDisable(true);
                 addProcessButton.setDisable(false);
-                if (currentSchedulerAlgorithm == SchedulerAlgorithm.RR)
-                    rrQuantumSpinBox.setDisable(false);
-                else
-                    rrQuantumSpinBox.setDisable(true);
+                rrQuantumSpinBox.setDisable(currentSchedulerAlgorithm != SchedulerAlgorithm.RR);
                 generateAverageWaitingTimeButton.setDisable(true);
                 generateAverageTurnaroundTimeButton.setDisable(true);
                 break;
@@ -210,10 +209,7 @@ public class App extends Application {
                 pauseButton.setDisable(true);
                 continueButton.setDisable(false);
                 addProcessButton.setDisable(false);
-                if (currentSchedulerAlgorithm == SchedulerAlgorithm.RR)
-                    rrQuantumSpinBox.setDisable(false);
-                else
-                    rrQuantumSpinBox.setDisable(true);
+                rrQuantumSpinBox.setDisable(currentSchedulerAlgorithm != SchedulerAlgorithm.RR);
                 generateAverageWaitingTimeButton.setDisable(false);
                 generateAverageTurnaroundTimeButton.setDisable(false);
                 break;
@@ -278,43 +274,48 @@ public class App extends Application {
         if (currentSchedulerState == SchedulerState.RUNNING)
             timeline.pause();
 
-        StringBuilder processPriority = new StringBuilder();
-        StringBuilder processBurst = new StringBuilder();
+        BooleanWrapper isSaved = new BooleanWrapper(false);    
+
+        StringWrapper processPriority = new StringWrapper();
+        StringWrapper processBurst = new StringWrapper();
         ProcessColor processColor = new ProcessColor(Color.RED);
-        StringBuilder processArrival = new StringBuilder();
-        AddProcessDialog addProcessDialog = new AddProcessDialog(processPriority, processBurst, processColor,
-                processArrival);
+        BooleanWrapper isFutureProcess = new BooleanWrapper(false);
+        StringWrapper processArrival = new StringWrapper();
+        AddProcessDialog addProcessDialog = new AddProcessDialog(isSaved,processPriority, processBurst, processColor,
+                isFutureProcess, processArrival);
 
         addProcessDialog.showDialog(currentSchedulerAlgorithm);
 
-        if (currentSchedulerAlgorithm == SchedulerAlgorithm.PREEMPTIVE_PRIORITY
-                || currentSchedulerAlgorithm == SchedulerAlgorithm.NON_PREEMPTIVE_PRIORITY) {
-            if (processPriority.length() == 0)
-                return;
+        if (!(isSaved.value)) {
+            return;
         }
 
-        if (processBurst.length() == 0)
-            return;
+        int priority, burst;
+
+        burst = Integer.parseInt(processBurst.value);
 
         Process process;
 
         if (currentSchedulerAlgorithm == SchedulerAlgorithm.PREEMPTIVE_PRIORITY
                 || currentSchedulerAlgorithm == SchedulerAlgorithm.NON_PREEMPTIVE_PRIORITY) {
+
+            priority = Integer.parseInt(processPriority.value);
+
             process = new Process(
-                    processesIdTracker++,
-                    (processArrival.length() == 0) ? accumulativeSeconds : Integer.parseInt(processArrival.toString()),
-                    Integer.parseInt(processBurst.toString()),
-                    Integer.parseInt(processPriority.toString()),
+                    ++processesIdTracker,
+                    (isFutureProcess.value) ? Integer.parseInt(processArrival.value) : accumulativeSeconds,
+                    burst,
+                    priority,
                     processColor.getColor());
         } else {
             process = new Process(
-                    processesIdTracker++,
-                    (processArrival.length() == 0) ? accumulativeSeconds : Integer.parseInt(processArrival.toString()),
-                    Integer.parseInt(processBurst.toString()),
+                    ++processesIdTracker,
+                    (isFutureProcess.value) ? Integer.parseInt(processArrival.value) : accumulativeSeconds,
+                    burst,
                     processColor.getColor());
         }
 
-        processDetailsTable.addProcess(SchedulerAlgorithm.PREEMPTIVE_PRIORITY, process);
+        processDetailsTable.addProcess(currentSchedulerAlgorithm, process);
 
         algorithmType.addProcessToReadyQueue(process);
 
@@ -331,6 +332,7 @@ public class App extends Application {
         SchedulerAlgorithm selectedValue = source.getSelectionModel().getSelectedItem();
         switch (selectedValue) {
             case NONE:
+                processesIdTracker = 0;
                 algorithmType = null;
                 currentSchedulerAlgorithm = SchedulerAlgorithm.NONE;
                 currentSchedulerState = SchedulerState.INVALID;
@@ -338,6 +340,7 @@ public class App extends Application {
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.NONE);
                 break;
             case FCFS:
+                processesIdTracker = 0;
                 algorithmType = new FirstComeFirstServed();
                 currentSchedulerAlgorithm = SchedulerAlgorithm.FCFS;
                 currentSchedulerState = SchedulerState.INITIALIZATION;
@@ -345,6 +348,7 @@ public class App extends Application {
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.FCFS);
                 break;
             case NON_PREEMPTIVE_PRIORITY:
+                processesIdTracker = 0;
                 algorithmType = new PreemptivePriority(false);
                 currentSchedulerAlgorithm = SchedulerAlgorithm.NON_PREEMPTIVE_PRIORITY;
                 currentSchedulerState = SchedulerState.INITIALIZATION;
@@ -352,6 +356,7 @@ public class App extends Application {
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.NON_PREEMPTIVE_PRIORITY);
                 break;
             case NON_PREEMPTIVE_SJF:
+                processesIdTracker = 0;
                 algorithmType = new SJFS(false);
                 currentSchedulerAlgorithm = SchedulerAlgorithm.NON_PREEMPTIVE_SJF;
                 currentSchedulerState = SchedulerState.INITIALIZATION;
@@ -359,6 +364,7 @@ public class App extends Application {
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.NON_PREEMPTIVE_SJF);
                 break;
             case PREEMPTIVE_PRIORITY:
+                processesIdTracker = 0;
                 algorithmType = new PreemptivePriority(true);
                 currentSchedulerAlgorithm = SchedulerAlgorithm.PREEMPTIVE_PRIORITY;
                 currentSchedulerState = SchedulerState.INITIALIZATION;
@@ -366,6 +372,7 @@ public class App extends Application {
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.PREEMPTIVE_PRIORITY);
                 break;
             case PREEMPTIVE_SJF:
+                processesIdTracker = 0;
                 algorithmType = new SJFS(true);
                 currentSchedulerAlgorithm = SchedulerAlgorithm.PREEMPTIVE_SJF;
                 currentSchedulerState = SchedulerState.INITIALIZATION;
@@ -373,6 +380,7 @@ public class App extends Application {
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.NON_PREEMPTIVE_SJF);
                 break;
             case RR:
+                processesIdTracker = 0;
                 algorithmType = new RoundRobinScheduler(rrQuantumSpinBox.getValue());
                 currentSchedulerAlgorithm = SchedulerAlgorithm.RR;
                 currentSchedulerState = SchedulerState.INITIALIZATION;
@@ -392,6 +400,34 @@ public class App extends Application {
     private void handleGenerateAverageTurnaroundTimeButtonPress(MouseEvent event) {
         double averageTurnaroundTime = algorithmType.getAverageTurnaroundTime();
         statusBar.updateAverageTurnaroundTime(averageTurnaroundTime);
+    }
+
+    public static class StringWrapper {
+        private String value;
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+    }
+
+    public static class BooleanWrapper {
+        private boolean value;
+
+        public BooleanWrapper(boolean value) {
+            this.value = value;
+        }
+
+        public boolean getValue() {
+            return value;
+        }
+
+        public void setValue(boolean value) {
+            this.value = value;
+        }
     }
 
     @Override

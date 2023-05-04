@@ -5,14 +5,15 @@ import javafx.scene.paint.Paint;
 
 public class Process {
 
-	private int id;
-    private int arrivalTime;
+	private final int id;
+    private final int arrivalTime;
     private int burstTime;
     private int priority;
     private int waitingTime;
     private int turnAroundTime;
     private int lastQueue;
-	private Color color;
+    private boolean isPreempted = false;
+	private final Color color;
 
     public Process(int id, int arrivalTime, int burstTime, int priority, Color color) {
         this.id = id;
@@ -32,6 +33,15 @@ public class Process {
 		this.color = color;
     }
 
+    public Process(int id, int arrivalTime, int burstTime, int priority) {
+        this.id = id;
+        this.arrivalTime = arrivalTime;
+        this.burstTime = burstTime;
+        this.priority = priority;
+        this.lastQueue = 1;
+		this.color = new Color(0, 0, 0, 1.0);
+    }
+
     public int getId() {
         return this.id;
     }
@@ -42,6 +52,14 @@ public class Process {
 
     public void setBurstTime(int burstTime) {
         this.burstTime = burstTime;
+    }
+
+    public boolean isPreempted() {
+        return isPreempted;
+    }
+
+    public void setPreempted(boolean isPreempted) {
+        this.isPreempted = isPreempted;
     }
 
     public int getBurstTime() {

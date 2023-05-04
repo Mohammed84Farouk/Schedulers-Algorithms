@@ -22,7 +22,19 @@ public class PreemptivePriority implements AlgorithmType {
     private double totalTurnaroundTime = 0.0;
     private int processesCount = 0;
 
-    private int agingRoundTime = 0;
+    private int agingRoundTime = 1;
+
+    private int currentTime = 0;
+
+    private boolean isAgingEnabled = true;
+
+    public int getCurrentTime() {
+        return currentTime;
+    }
+
+    public void setCurrentTime(int currentTime) {
+        this.currentTime = currentTime;
+    }
 
     public PreemptivePriority(boolean isPreemptive) {
         this.isPreemptive = isPreemptive;
@@ -30,24 +42,31 @@ public class PreemptivePriority implements AlgorithmType {
         readyQueue = new Vector<Process>();
     }
 
- @Override
+    @Override
     public void addProcessToReadyQueue(Process process) {
+        //System.out.println("addProcessToReadyQueue:getArrivalTime: " + process.getArrivalTime());
         processesCount++;
+        currentTime = App.getCurrentTime(); // Comment this line before running tests
         switch (cpu.getState()) {
             case IDLE:
-                cpu.switchState(CPUState.BUZY);
-                cpu.hookProcess(process);
+                if (process.getArrivalTime() <= currentTime) {
+                    cpu.hookProcess(process);
+                    cpu.switchState(CPUState.BUZY);
+                } else {
+                    hookProcessOnReadyQueue(process);
+                }
                 return;
             case BUZY:
-                if(isPreemptive){
-                    hookProcessOnCPUIfHigherPriority(process);
-                    return;
-                }
-                else
-                {
+                if (process.getArrivalTime() <= currentTime) {
+                    if (isPreemptive) {
+                        hookProcessOnCPUIfHigherPriority(process);
+                    } else {
+                        hookProcessOnReadyQueue(process);
+                    }
+                } else {
                     hookProcessOnReadyQueue(process);
-                    return;
                 }
+                return;
             default:
                 return;
         }
@@ -61,7 +80,9 @@ public class PreemptivePriority implements AlgorithmType {
          * 
          */
         if (process.getPriority() < cpu.getHookedProcessPriority()) {
+            cpu.getHookedProcess().setPreempted(true);
             hookProcessOnReadyQueue(cpu.getHookedProcess());
+            cpu.unHookProcess();
             cpu.hookProcess(process);
         } else {
             hookProcessOnReadyQueue(process);
@@ -82,18 +103,61 @@ public class PreemptivePriority implements AlgorithmType {
         return cpu.isBuzy();
     }
 
+    public CPU getCpu() {
+        return cpu;
+    }
+
+    public void setAgingEnabled(boolean isAgingEnabled) {
+        this.isAgingEnabled = isAgingEnabled;
+    }
+
+    public boolean isPreemptive() {
+        return isPreemptive;
+    }
+
+    public Vector<Process> getReadyQueue() {
+        return readyQueue;
+    }
+
+    public double getTotalWaitingTime() {
+        return totalWaitingTime;
+    }
+
+    public double getTotalTurnaroundTime() {
+        return totalTurnaroundTime;
+    }
+
+    public int getProcessesCount() {
+        return processesCount;
+    }
+
+    public int getAgingRoundTime() {
+        return agingRoundTime;
+    }
+
     @Override
     public void executeProcess() {
-        int currentTime = App.getCurrentTime();
-        agingRoundTime++;
-        if (agingRoundTime > 4) {
-            ageProcesses();
-            agingRoundTime = 0;
+        currentTime = App.getCurrentTime(); // Comment this line before running tests
+
+        //System.out.println("executeProcess:currentTime: " + currentTime);
+
+        checkFutureArrivalProcessesInReadyQueue(currentTime);
+
+        if (isAgingEnabled) {
+            agingRoundTime++;
+            /*
+             * Every 5 seconds we age processes in ready queue to prevent starvation.
+             */
+            if (agingRoundTime % 5 == 0) {
+                ageProcesses();
+                agingRoundTime = 1;
+            }
         }
 
         if (cpu.getState() == CPUState.IDLE) {
-            if (!hookProcessOnCPUFromReadyQueue())
-                return;  
+            //System.out.println("executeProcess:enteredIDLEIf");
+            if (!hookProcessOnCPUFromReadyQueue(currentTime))
+                return;
         }
 
         cpu.getHookedProcess().runProcess(1);
@@ -105,18 +169,44 @@ public class PreemptivePriority implements AlgorithmType {
             totalWaitingTime += cpu.getHookedProcess().getTurnAroundTime() + cpu.getHookedProcess().getWaitingTime();
             cpu.switchState(CPUState.IDLE);
             cpu.unHookProcess();
-            hookProcessOnCPUFromReadyQueue();
+            hookProcessOnCPUFromReadyQueue(currentTime);
         }
     }
 
-    private boolean hookProcessOnCPUFromReadyQueue() {
+    private void checkFutureArrivalProcessesInReadyQueue(int currentTime) {
+        for (int i = 0; i < readyQueue.size(); i++) {
+            if (readyQueue.elementAt(i).getArrivalTime() == currentTime + 1) {
+                Process process = readyQueue.elementAt(i);
+                readyQueue.removeElementAt(i);
+                i--;
+                switch (cpu.getState()) {
+                    case IDLE:
+                        cpu.hookProcess(process);
+                        cpu.switchState(CPUState.BUZY);
+                        break;
+                    case BUZY:
+                        hookProcessOnCPUIfHigherPriority(process);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    private boolean hookProcessOnCPUFromReadyQueue(int currentTime) {
         if (readyQueue.size() == 0)
             return false;
 
         int highestPriorityProcessValue = Integer.MAX_VALUE;
         int highestPriorityProcessIndex = Integer.MAX_VALUE;
         for (int i = 0; i < readyQueue.size(); i++) {
-            if (readyQueue.elementAt(i).getPriority() < highestPriorityProcessValue) {
+            if (readyQueue.elementAt(i).getPriority() < highestPriorityProcessValue
+                    && readyQueue.elementAt(i).getArrivalTime() <= currentTime + 1
+                    || readyQueue.elementAt(i).getPriority() == highestPriorityProcessValue
+                    && readyQueue.elementAt(i).isPreempted()) {
+                        // if (readyQueue.elementAt(i).getPriority() == highestPriorityProcessValue
+                        // && readyQueue.elementAt(i).isPreempted()) System.out.println("yeeeeeeeeeeeeeeeah!!!!!");
                 highestPriorityProcessIndex = i;
                 highestPriorityProcessValue = readyQueue.elementAt(i).getPriority();
             }
@@ -126,13 +216,14 @@ public class PreemptivePriority implements AlgorithmType {
             cpu.hookProcess(readyQueue.elementAt(highestPriorityProcessIndex));
             cpu.switchState(CPUState.BUZY);
             readyQueue.removeElementAt(highestPriorityProcessIndex);
-        }
+        } else
+            return false;
 
         return true;
     }
 
     private void ageProcesses() {
-        for (int i = 0 ; i < readyQueue.size() ; i++) {
+        for (int i = 0; i < readyQueue.size(); i++) {
             readyQueue.elementAt(i).age();
         }
     }

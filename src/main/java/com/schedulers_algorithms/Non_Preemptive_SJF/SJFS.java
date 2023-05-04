@@ -50,7 +50,6 @@ public class SJFS implements AlgorithmType {
         return currentProcess != null;
     }
 
-
     @Override
     public void executeProcess() {
         if (currentProcess != null) {
@@ -112,4 +111,15 @@ public class SJFS implements AlgorithmType {
         }
     }
 
+    // @Override
+    // public double getAverageWaitingTime() {
+    //     // TODO Auto-generated method stub
+    //     throw new UnsupportedOperationException("Unimplemented method 'getAverageWaitingTime'");
+    // }
+
+//    @Override
+//    public double getAverageTurnaroundTime() {
+//        // TODO Auto-generated method stub
+//        throw new UnsupportedOperationException("Unimplemented method 'getAverageTurnaroundTime'");
+//    }
 }

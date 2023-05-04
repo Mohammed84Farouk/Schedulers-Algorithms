@@ -31,18 +31,17 @@ public class StatusBar extends HBox {
         HBox.setMargin(waitingProcessesCountValueLabel, new javafx.geometry.Insets(0, 10, 0, 5));
         getChildren().add(waitingProcessesCountValueLabel);
 
-        Label averageWaitingTimeLabel = new Label("Aver Waiting Time:");
+        Label averageWaitingTimeLabel = new Label("Avg Waiting Time:");
         HBox.setMargin(averageWaitingTimeLabel, new javafx.geometry.Insets(0, 5, 0, 10));
         getChildren().add(averageWaitingTimeLabel);
         HBox.setMargin(averageWaitingTimeValueLabel, new javafx.geometry.Insets(0, 10, 0, 5));
         getChildren().add(averageWaitingTimeValueLabel);
 
-        Label averageTurnaroundTimeLabel = new Label("Aver Turnaround Time:");
+        Label averageTurnaroundTimeLabel = new Label("Avg Turnaround Time:");
         HBox.setMargin(averageTurnaroundTimeLabel, new javafx.geometry.Insets(0, 5, 0, 10));
         getChildren().add(averageTurnaroundTimeLabel);
         HBox.setMargin(averageTurnaroundTimeValueLabel, new javafx.geometry.Insets(0, 10, 0, 5));
         getChildren().add(averageTurnaroundTimeValueLabel);
-
 
         layout.getChildren().add(this);
     }
