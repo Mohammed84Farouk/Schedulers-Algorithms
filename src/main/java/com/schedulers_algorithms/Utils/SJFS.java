@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.TreeSet;
 
 public class SJFS {
-	private final TreeSet<Process> processes = new TreeSet<>(new SJFSProcessComparator());
-	private final ArrayList<Process> finished = new ArrayList<Process>();
+	private TreeSet<Process> processes = new TreeSet<>(new SJFSProcessComparator());
+	private ArrayList<Process> finished = new ArrayList<Process>();
 	
 	public void addProcess(Process p) {
 		this.processes.add(p);
