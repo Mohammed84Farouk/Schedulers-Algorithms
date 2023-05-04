@@ -26,7 +26,7 @@ public class PreemptivePriority implements AlgorithmType {
 
     private int currentTime = 0;
 
-    private boolean isAgingEnabled = true; // this variable disables aging for testing purposes.
+    private boolean isAgingEnabled = true; // this variable disables aging feature for testing purposes.
 
     public int getCurrentTime() {
         return currentTime;
