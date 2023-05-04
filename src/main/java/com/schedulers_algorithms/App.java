@@ -310,7 +310,6 @@ public class App extends Application {
             priority = Integer.parseInt(processPriority.value);
 
             process = new Process(
-<<<<<<< HEAD
                     ++processesIdTracker,
                     (isFutureProcess.value) ? Integer.parseInt(processArrival.value) : accumulativeSeconds,
                     burst,
@@ -321,18 +320,6 @@ public class App extends Application {
                     ++processesIdTracker,
                     (isFutureProcess.value) ? Integer.parseInt(processArrival.value) : accumulativeSeconds,
                     burst,
-=======
-                    processesIdTracker++,
-                    (processArrival.length() == 0) ? accumulativeSeconds : Integer.parseInt(processArrival.toString()),
-                    Integer.parseInt(processBurst.toString()),
-                    Integer.parseInt(processPriority.toString()),
-                    processColor.getColor());
-        } else {
-            process = new Process(
-                    processesIdTracker++,
-                    (processArrival.length() == 0) ? accumulativeSeconds : Integer.parseInt(processArrival.toString()),
-                    Integer.parseInt(processBurst.toString()),
->>>>>>> parent of 055c2b3 (updated tables, processes, and exceptions)
                     processColor.getColor());
         }
 
@@ -353,10 +340,7 @@ public class App extends Application {
         SchedulerAlgorithm selectedValue = source.getSelectionModel().getSelectedItem();
         switch (selectedValue) {
             case NONE:
-<<<<<<< HEAD
                 processesIdTracker = 0;
-=======
->>>>>>> parent of 055c2b3 (updated tables, processes, and exceptions)
                 algorithmType = null;
                 currentSchedulerAlgorithm = SchedulerAlgorithm.NONE;
                 currentSchedulerState = SchedulerState.INVALID;
@@ -364,10 +348,7 @@ public class App extends Application {
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.NONE);
                 break;
             case FCFS:
-<<<<<<< HEAD
                 processesIdTracker = 0;
-=======
->>>>>>> parent of 055c2b3 (updated tables, processes, and exceptions)
                 algorithmType = new FirstComeFirstServed();
                 currentSchedulerAlgorithm = SchedulerAlgorithm.FCFS;
                 currentSchedulerState = SchedulerState.INITIALIZATION;
@@ -375,10 +356,7 @@ public class App extends Application {
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.FCFS);
                 break;
             case NON_PREEMPTIVE_PRIORITY:
-<<<<<<< HEAD
                 processesIdTracker = 0;
-=======
->>>>>>> parent of 055c2b3 (updated tables, processes, and exceptions)
                 algorithmType = new PreemptivePriority(false);
                 currentSchedulerAlgorithm = SchedulerAlgorithm.NON_PREEMPTIVE_PRIORITY;
                 currentSchedulerState = SchedulerState.INITIALIZATION;
@@ -386,10 +364,7 @@ public class App extends Application {
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.NON_PREEMPTIVE_PRIORITY);
                 break;
             case NON_PREEMPTIVE_SJF:
-<<<<<<< HEAD
                 processesIdTracker = 0;
-=======
->>>>>>> parent of 055c2b3 (updated tables, processes, and exceptions)
                 algorithmType = new SJFS(false);
                 currentSchedulerAlgorithm = SchedulerAlgorithm.NON_PREEMPTIVE_SJF;
                 currentSchedulerState = SchedulerState.INITIALIZATION;
@@ -397,10 +372,7 @@ public class App extends Application {
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.NON_PREEMPTIVE_SJF);
                 break;
             case PREEMPTIVE_PRIORITY:
-<<<<<<< HEAD
                 processesIdTracker = 0;
-=======
->>>>>>> parent of 055c2b3 (updated tables, processes, and exceptions)
                 algorithmType = new PreemptivePriority(true);
                 currentSchedulerAlgorithm = SchedulerAlgorithm.PREEMPTIVE_PRIORITY;
                 currentSchedulerState = SchedulerState.INITIALIZATION;
@@ -408,10 +380,7 @@ public class App extends Application {
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.PREEMPTIVE_PRIORITY);
                 break;
             case PREEMPTIVE_SJF:
-<<<<<<< HEAD
                 processesIdTracker = 0;
-=======
->>>>>>> parent of 055c2b3 (updated tables, processes, and exceptions)
                 algorithmType = new SJFS(true);
                 currentSchedulerAlgorithm = SchedulerAlgorithm.PREEMPTIVE_SJF;
                 currentSchedulerState = SchedulerState.INITIALIZATION;
@@ -419,10 +388,7 @@ public class App extends Application {
                 processDetailsTable.switchAlgorithm(SchedulerAlgorithm.NON_PREEMPTIVE_SJF);
                 break;
             case RR:
-<<<<<<< HEAD
                 processesIdTracker = 0;
-=======
->>>>>>> parent of 055c2b3 (updated tables, processes, and exceptions)
                 algorithmType = new RoundRobinScheduler(rrQuantumSpinBox.getValue());
                 currentSchedulerAlgorithm = SchedulerAlgorithm.RR;
                 currentSchedulerState = SchedulerState.INITIALIZATION;

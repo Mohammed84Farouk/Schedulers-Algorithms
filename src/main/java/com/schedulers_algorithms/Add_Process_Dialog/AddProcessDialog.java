@@ -27,17 +27,10 @@ import com.schedulers_algorithms.Utils.Process;
 import com.schedulers_algorithms.Utils.ProcessColor;
 
 public class AddProcessDialog extends Stage {
-<<<<<<< HEAD
     private final Spinner<Integer> processPrioritySpinner = new Spinner<Integer>();
     private final Spinner<Integer> processBurstSpinner = new Spinner<Integer>();
     private final ColorPicker processColorPicker = new ColorPicker(Color.RED);
     private final Spinner<Integer> processArrivalSpinner = new Spinner<Integer>();
-=======
-    private TextField processPriorityField = new TextField();
-    private TextField processBurstField = new TextField();
-    private ColorPicker processColorPicker = new ColorPicker(Color.RED);
-    private TextField processArrivalField = new TextField();
->>>>>>> parent of 055c2b3 (updated tables, processes, and exceptions)
 
     BooleanWrapper isSaved;
     StringWrapper processPriority;
