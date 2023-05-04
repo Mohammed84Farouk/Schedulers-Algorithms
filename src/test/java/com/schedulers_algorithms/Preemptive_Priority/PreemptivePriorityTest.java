@@ -355,4 +355,64 @@ public class PreemptivePriorityTest {
         }
 
     }
+
+    @Test
+    public void testExecuteProcess_initialProcesses_temp() {
+        clearCPU();
+        clearReadyQueue();
+
+        preemptivePriority.setCurrentTime(0);
+
+        ArrayList<Process> processes = new ArrayList<Process>();
+        processes.add(new Process(0, 1, 2,0));
+        processes.add(new Process(1, 1, 2,0));
+        processes.add(new Process(2, 1, 2,0));
+        
+        for (int i = 0 ; i < processes.size() ; i++) {
+            preemptivePriority.addProcessToReadyQueue(processes.get(i));
+        }
+        
+        ArrayList<Integer> priorities = new ArrayList<Integer>();
+        priorities.add(0);
+        priorities.add(0);
+        priorities.add(0);
+
+        ArrayList<Integer> ids = new ArrayList<Integer>();
+        ids.add(0);
+        ids.add(1);
+        ids.add(2);
+
+        int index = 0;
+
+        Assertions.assertEquals(processes.size(), preemptivePriority.getReadyQueue().size());
+        Assertions.assertEquals(false, preemptivePriority.getCpu().isBuzy());
+        
+        boolean canCheck = false;
+        index++;
+
+        /*
+         * Run for 100 seconds
+         * 
+         */
+        for (int i = 0 ; i < 100 ; i++, preemptivePriority.setCurrentTime(i)) {
+            if (!preemptivePriority.getCpu().isBuzy()) continue;
+
+            if (preemptivePriority.getCPUHookedProcess().getBurstTime() == 1) canCheck = true;
+
+            preemptivePriority.executeProcess();
+
+            if (!preemptivePriority.getCpu().isBuzy()) {
+                canCheck = false;
+                continue;
+            }
+
+            if (canCheck == true) {
+                Assertions.assertEquals(ids.get(index), preemptivePriority.getCPUHookedProcess().getId());
+                Assertions.assertEquals(priorities.get(index), preemptivePriority.getCPUHookedProcess().getPriority());
+                canCheck = false;
+                index++;
+            }
+        }
+
+    }
 }
