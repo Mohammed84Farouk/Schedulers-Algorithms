@@ -15,6 +15,8 @@ public class RoundRobinScheduler implements AlgorithmType{
     private int timeQuantum;
     private CPU cpu;
     int time = 0;
+    private double totalturnaroundtime, totalwaitingtime;
+    private int numofprocess;
 
     public RoundRobinScheduler(int timeQuantum) {
         this.queue1 = new LinkedList<>();
@@ -26,6 +28,7 @@ public class RoundRobinScheduler implements AlgorithmType{
     @Override
     public void addProcessToReadyQueue(Process process) {
         queue1.add(process);
+        numofprocess++;
     }
     public void setQuantum(int quantum){
         this.timeQuantum = quantum;
@@ -41,8 +44,10 @@ public class RoundRobinScheduler implements AlgorithmType{
             }
             else{
                 if (!queue1.isEmpty() && !(queue1.peek().getArrivalTime() <= App.getCurrentTime())) {
+                    System.out.println(App.getCurrentTime() + "HHH");
                     queue2.add(queue1.poll());
                 } else if(!queue2.isEmpty() && !(queue2.peek().getArrivalTime() <= App.getCurrentTime())){
+                    System.out.println(App.getCurrentTime() + "zzz");
                     queue1.add(queue2.poll());
                 }
                 return;
@@ -53,8 +58,10 @@ public class RoundRobinScheduler implements AlgorithmType{
             System.out.println("Arrivial:" + currentProcess.getArrivalTime() + " App Current:"+App.getCurrentTime());
             if (currentProcess.isFinished()) {
                 currentProcess.setTurnAroundTime(time - currentProcess.getArrivalTime());
+                totalturnaroundtime += currentProcess.getTurnAroundTime();
                 currentProcess.setWaitingTime(currentProcess.getTurnAroundTime() - currentProcess.getBurstTime());
-                System.out.println("Process " + currentProcess.getId() + " finished at time " + time);
+                totalwaitingtime += currentProcess.getWaitingTime();
+                System.out.println("Process " + currentProcess.getId() + " finished at time " + App.getCurrentTime());
             } else {
                 if (currentProcess.getLastQueue() == 1) {
                     currentProcess.setLastQueue(2);
@@ -63,36 +70,17 @@ public class RoundRobinScheduler implements AlgorithmType{
                     currentProcess.setLastQueue(1);
                     queue1.add(currentProcess);
                 }
-                System.out.println("Process " + currentProcess.getId() + " is executing at time " + time);
+                System.out.println("Process " + currentProcess.getId() + " is executing at time " + App.getCurrentTime());
             }
         }
     }
+    @Override
     public double getAverageWaitingTime() {
-        int totalWaitingTime = 0;
-        int numProcesses = 0;
-        for (Process p : queue1) {
-            totalWaitingTime += p.getWaitingTime();
-            numProcesses++;
-        }
-        for (Process p : queue2) {
-            totalWaitingTime += p.getWaitingTime();
-            numProcesses++;
-        }
-        return (double) totalWaitingTime / numProcesses;
+        return (double) totalwaitingtime / numofprocess;
     }
-    
+    @Override 
     public double getAverageTurnaroundTime() {
-        int totalTurnaroundTime = 0;
-        int numProcesses = 0;
-        for (Process p : queue1) {
-            totalTurnaroundTime += p.getTurnAroundTime();
-            numProcesses++;
-        }
-        for (Process p : queue2) {
-            totalTurnaroundTime += p.getTurnAroundTime();
-            numProcesses++;
-        }
-        return (double) totalTurnaroundTime / numProcesses;
+        return (double) totalturnaroundtime / numofprocess;
     }
     @Override
     public Process getCPUHookedProcess() {
