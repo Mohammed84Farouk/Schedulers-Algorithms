@@ -323,7 +323,7 @@ public class App extends Application {
                     processColor.getColor());
         }
 
-        processDetailsTable.addProcess(SchedulerAlgorithm.PREEMPTIVE_PRIORITY, process);
+        processDetailsTable.addProcess(currentSchedulerAlgorithm, process);
 
         algorithmType.addProcessToReadyQueue(process);
 
