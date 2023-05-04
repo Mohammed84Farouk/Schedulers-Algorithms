@@ -12,12 +12,8 @@ public class Process {
     private int waitingTime;
     private int turnAroundTime;
     private int lastQueue;
-<<<<<<< HEAD
     private boolean isPreempted = false;
 	private final Color color;
-=======
-	private Color color;
->>>>>>> parent of 055c2b3 (updated tables, processes, and exceptions)
 
     public Process(int id, int arrivalTime, int burstTime, int priority, Color color) {
         this.id = id;
