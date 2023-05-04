@@ -131,15 +131,22 @@ public class App extends Application {
     private void handleTimelineEvent(ActionEvent event) {
         // if(algorithmType instanceof RoundRobinScheduler) algorithmType.executeProcess();
 
+        //  && algorithmType.getCPUHookedProcess().getArrivalTime() <= accumulativeSeconds
+
         if (algorithmType.isCPUBuzy() && algorithmType.getCPUHookedProcess().getArrivalTime() <= accumulativeSeconds) {
             Label label = new Label("P" + lastProcess);
             if (lastProcess == -1) {
+                System.out.println("lastProcess == -1: ");
                 lastProcess = algorithmType.getCPUHookedProcess().getId();
                 lastTime = accumulativeSeconds + (algorithmType instanceof SJFS ? -1 : 0);
                 lastColor = algorithmType.getCPUHookedProcess().getColor();
-            } else if (lastProcess == algorithmType.getCPUHookedProcess().getId())
+            } else if (lastProcess == algorithmType.getCPUHookedProcess().getId()) {
+                System.out.println("lastProcess == algorithmType.getCPUHookedProcess().getId(): ");
                 tempX += 50;
+            }
             else {
+                System.out.println("else: ");
+                System.out.println("before else");
                 createRectangle(label);
                 tempX = 50;
                 lastProcess = algorithmType.getCPUHookedProcess().getId();
@@ -151,10 +158,14 @@ public class App extends Application {
             ganttChart.adjustView(); // TODO fix here
         } else if (lastProcess != -1) {
             Label label = new Label("P" + lastProcess);
+            System.out.println("before lastProcess != -1");
+            if (algorithmType.isCPUBuzy()) System.out.println("id: "+algorithmType.getCPUHookedProcess().getId());
+            else System.out.println("id: idle");
             createRectangle(label);
             lastProcess = -1;
             tempX = 50;
         } else { // ready queue is empty and we're still counting
+            System.out.println("lastProcess: "+lastProcess);
             if (!(algorithmType instanceof SJFS) || algorithmType instanceof SJFS && accumulativeSeconds >= 1) {
                 Rectangle rectangle = new Rectangle(50, 50);
                 rectangle.setFill(Color.TRANSPARENT);
@@ -167,6 +178,8 @@ public class App extends Application {
         }
 
         algorithmType.executeProcess();
+
+        System.out.println("currentTime from app: "+accumulativeSeconds);
 
         accumulativeSeconds++;
         String hoursStr = String.format("%02d", (accumulativeSeconds / 3600));
@@ -191,6 +204,8 @@ public class App extends Application {
         StackPane stackPane = new StackPane();
         stackPane.getChildren().addAll(rectangle, label, hbox);
         ganttChart.getChildren().add(stackPane);
+
+        System.out.println("tempX: "+tempX);
     }
 
     private void updateLook() {

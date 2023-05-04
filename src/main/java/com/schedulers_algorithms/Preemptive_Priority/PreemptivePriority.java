@@ -82,8 +82,10 @@ public class PreemptivePriority implements AlgorithmType {
         if (process.getPriority() < cpu.getHookedProcessPriority()) {
             cpu.getHookedProcess().setPreempted(true);
             hookProcessOnReadyQueue(cpu.getHookedProcess());
+            cpu.switchState(CPUState.IDLE);
             cpu.unHookProcess();
             cpu.hookProcess(process);
+            cpu.switchState(CPUState.BUZY);
         } else {
             hookProcessOnReadyQueue(process);
         }
@@ -159,6 +161,8 @@ public class PreemptivePriority implements AlgorithmType {
             if (!hookProcessOnCPUFromReadyQueue(currentTime))
                 return;
         }
+        
+        if (cpu.getHookedProcess().getArrivalTime() > currentTime) return;
 
         cpu.getHookedProcess().runProcess(1);
         cpu.getHookedProcess().setWaitingTime(cpu.getHookedProcess().getWaitingTime() - 1);
@@ -174,18 +178,23 @@ public class PreemptivePriority implements AlgorithmType {
     }
 
     private void checkFutureArrivalProcessesInReadyQueue(int currentTime) {
+        // System.out.println("before size(): "+readyQueue.size());
         for (int i = 0; i < readyQueue.size(); i++) {
-            if (readyQueue.elementAt(i).getArrivalTime() == currentTime + 1) {
-                Process process = readyQueue.elementAt(i);
+            if (readyQueue.elementAt(i).getArrivalTime() == currentTime+1) {
+                Process futureProcess = readyQueue.elementAt(i);
                 readyQueue.removeElementAt(i);
+                // System.out.println("currentTime from algo: "+currentTime);
+                // System.out.println("i: "+i);
+                // System.out.println("size(): "+readyQueue.size());
                 i--;
                 switch (cpu.getState()) {
                     case IDLE:
-                        cpu.hookProcess(process);
+                        cpu.hookProcess(futureProcess);
                         cpu.switchState(CPUState.BUZY);
-                        break;
+                        return;
                     case BUZY:
-                        hookProcessOnCPUIfHigherPriority(process);
+                        hookProcessOnCPUIfHigherPriority(futureProcess);
+                        if (futureProcess.getId() == cpu.getHookedProcess().getId()) return;
                         break;
                     default:
                         break;
@@ -202,7 +211,7 @@ public class PreemptivePriority implements AlgorithmType {
         int highestPriorityProcessIndex = Integer.MAX_VALUE;
         for (int i = 0; i < readyQueue.size(); i++) {
             if (readyQueue.elementAt(i).getPriority() < highestPriorityProcessValue
-                    && readyQueue.elementAt(i).getArrivalTime() <= currentTime + 1
+                    && readyQueue.elementAt(i).getArrivalTime() <= currentTime+1
                     || readyQueue.elementAt(i).getPriority() == highestPriorityProcessValue
                     && readyQueue.elementAt(i).isPreempted()) {
                         // if (readyQueue.elementAt(i).getPriority() == highestPriorityProcessValue
