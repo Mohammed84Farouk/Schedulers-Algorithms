@@ -129,9 +129,9 @@ public class App extends Application {
     Color lastColor;
 
     private void handleTimelineEvent(ActionEvent event) {
-        if(algorithmType instanceof RoundRobinScheduler) algorithmType.executeProcess();
+        // if(algorithmType instanceof RoundRobinScheduler) algorithmType.executeProcess();
 
-        else if (algorithmType.isCPUBuzy()) {
+        if (algorithmType.isCPUBuzy() && algorithmType.getCPUHookedProcess().getArrivalTime() <= accumulativeSeconds) {
             Label label = new Label("P" + lastProcess);
             if (lastProcess == -1) {
                 lastProcess = algorithmType.getCPUHookedProcess().getId();
@@ -227,10 +227,7 @@ public class App extends Application {
                 pauseButton.setDisable(false);
                 continueButton.setDisable(true);
                 addProcessButton.setDisable(false);
-                if (currentSchedulerAlgorithm == SchedulerAlgorithm.RR)
-                    rrQuantumSpinBox.setDisable(true);
-                else
-                    rrQuantumSpinBox.setDisable(true);
+                rrQuantumSpinBox.setDisable(true);
                 generateAverageWaitingTimeButton.setDisable(true);
                 generateAverageTurnaroundTimeButton.setDisable(true);
                 break;
@@ -245,6 +242,14 @@ public class App extends Application {
                 generateAverageTurnaroundTimeButton.setDisable(true);
                 break;
             default:
+                startButton.setDisable(true);
+                stopButton.setDisable(true);
+                pauseButton.setDisable(true);
+                continueButton.setDisable(true);
+                addProcessButton.setDisable(true);
+                rrQuantumSpinBox.setDisable(true);
+                generateAverageWaitingTimeButton.setDisable(true);
+                generateAverageTurnaroundTimeButton.setDisable(true);
                 break;
         }
     }
@@ -289,10 +294,10 @@ public class App extends Application {
         ProcessColor processColor = new ProcessColor(Color.RED);
         BooleanWrapper isFutureProcess = new BooleanWrapper(false);
         StringWrapper processArrival = new StringWrapper();
-        AddProcessDialog addProcessDialog = new AddProcessDialog(isSaved,processPriority, processBurst, processColor,
+        AddProcessDialog addProcessDialog = new AddProcessDialog(currentSchedulerAlgorithm,isSaved,processPriority, processBurst, processColor,
                 isFutureProcess, processArrival);
 
-        addProcessDialog.showDialog(currentSchedulerAlgorithm);
+        addProcessDialog.showDialog();
 
         if (!(isSaved.value)) {
             return;
@@ -470,6 +475,10 @@ public class App extends Application {
                 addProcessButton);
 
         rrQuantumSpinBox.place(schedulersControllers);
+
+        rrQuantumSpinBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            ((RoundRobinScheduler)algorithmType).setQuantum(rrQuantumSpinBox.getValue());
+        });
 
         schedulersControllers.setSpacing(10);
 
