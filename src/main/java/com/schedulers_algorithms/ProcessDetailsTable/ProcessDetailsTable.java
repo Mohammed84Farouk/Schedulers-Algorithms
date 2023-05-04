@@ -3,7 +3,6 @@ package com.schedulers_algorithms.ProcessDetailsTable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.collections.ObservableList;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.collections.FXCollections;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -20,18 +19,18 @@ import com.schedulers_algorithms.App.SchedulerAlgorithm;
 import javafx.beans.property.SimpleStringProperty;
 
 public class ProcessDetailsTable extends TableView<String[]> {
-    private ObservableList<String[]> data = FXCollections.observableArrayList();
+    private final ObservableList<String[]> data = FXCollections.observableArrayList();
 
     public void switchAlgorithm(SchedulerAlgorithm algorithm) {
         switch (algorithm) {
             case NONE:
                 resetTable();
                 break;
-            case FCFS:                          // TODO
+            case FCFS:
                 resetTable();
                 setupFCFS();
                 break;
-            case NON_PREEMPTIVE_PRIORITY:       // TODO
+            case NON_PREEMPTIVE_PRIORITY:
                 resetTable();
                 setupNonPreemptivePriority();
                 break;
@@ -43,11 +42,11 @@ public class ProcessDetailsTable extends TableView<String[]> {
                 resetTable();
                 setupPreemptivePriority();
                 break;
-            case PREEMPTIVE_SJF:                // TODO
+            case PREEMPTIVE_SJF:
                 resetTable();
                 setupPreemptiveSJF();
                 break;
-            case RR:                            // TODO
+            case RR:
                 resetTable();
                 setupRoundRobin();
                 break;
@@ -204,37 +203,26 @@ public class ProcessDetailsTable extends TableView<String[]> {
 
     public void addProcess(SchedulerAlgorithm algorithm, Process process) {
         switch (algorithm) {
-            case NONE:
-                break;
             case FCFS:
+            case NON_PREEMPTIVE_SJF:
+            case RR:
+            case PREEMPTIVE_SJF:
                 data.add(new String[] {
-                    "P"+Integer.toString(process.getId()),
+                    "P"+ process.getId(),
                         String.valueOf(process.getArrivalTime()),
                         String.valueOf(process.getBurstTime()) });
                 break;
             case NON_PREEMPTIVE_PRIORITY:
-                break;
-            case NON_PREEMPTIVE_SJF:
-                break;
             case PREEMPTIVE_PRIORITY:
                 data.add(new String[] {
-                    "P"+Integer.toString(process.getId()),
+                        "P"+ process.getId(),
                         String.valueOf(process.getArrivalTime()),
                         String.valueOf(process.getBurstTime()),
                         String.valueOf(process.getPriority()) });
                 break;
-            case PREEMPTIVE_SJF:
-                break;
-            case RR:
-                data.add(new String[] {
-                    "P"+Integer.toString(process.getId()),
-                        String.valueOf(process.getArrivalTime()),
-                        String.valueOf(process.getBurstTime()) });
-                break;
             default:
                 break;
         }
-        // refresh();
     }
 
     public void place(Pane layout) {
