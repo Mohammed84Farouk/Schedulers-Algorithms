@@ -476,6 +476,10 @@ public class App extends Application {
 
         rrQuantumSpinBox.place(schedulersControllers);
 
+        rrQuantumSpinBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            ((RoundRobinScheduler)algorithmType).setQuantum(rrQuantumSpinBox.getValue());
+        });
+
         schedulersControllers.setSpacing(10);
 
         mainLayout.getChildren().add(schedulersControllers);

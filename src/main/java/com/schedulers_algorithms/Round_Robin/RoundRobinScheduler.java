@@ -32,6 +32,7 @@ public class RoundRobinScheduler implements AlgorithmType{
     }
     public void setQuantum(int quantum){
         this.timeQuantum = quantum;
+        System.out.println(this.timeQuantum);
     }
     @Override
     public void executeProcess() {
