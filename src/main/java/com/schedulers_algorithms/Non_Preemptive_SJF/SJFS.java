@@ -35,7 +35,7 @@ public class SJFS implements AlgorithmType {
     public double getAverageWaitingTime(){
         return this.AverageWaitingTime;
     }
-    public double getAverageTurnaroundTime(){
+    public double getAverageTurnAroundTime(){
         return this.AverageTurnAroundTime;
     }
 
@@ -117,9 +117,9 @@ public class SJFS implements AlgorithmType {
     //     throw new UnsupportedOperationException("Unimplemented method 'getAverageWaitingTime'");
     // }
 
-//    @Override
-//    public double getAverageTurnaroundTime() {
-//        // TODO Auto-generated method stub
-//        throw new UnsupportedOperationException("Unimplemented method 'getAverageTurnaroundTime'");
-//    }
+    @Override
+    public double getAverageTurnaroundTime() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAverageTurnaroundTime'");
+    }
 }

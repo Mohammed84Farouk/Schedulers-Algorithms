@@ -5,8 +5,8 @@ import javafx.scene.paint.Paint;
 
 public class Process {
 
-	private final int id;
-    private final int arrivalTime;
+	private int id;
+    private int arrivalTime;
     private int burstTime;
     private int priority;
     private int waitingTime;

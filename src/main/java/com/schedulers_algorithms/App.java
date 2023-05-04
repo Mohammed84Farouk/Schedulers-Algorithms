@@ -125,11 +125,13 @@ public class App extends Application {
      * 
      * Timer function.
      */
-    int tempX = 50, lastProcess = -1, lastTime = 0;
+    int tempX = 50, lastProcess = -1, lastTime = 0, Fathy = -1;
     Color lastColor;
 
     private void handleTimelineEvent(ActionEvent event) {
-        if (algorithmType.isCPUBuzy()) {
+        if(algorithmType instanceof RoundRobinScheduler) algorithmType.executeProcess();
+
+        else if (algorithmType.isCPUBuzy()) {
             Label label = new Label("P" + lastProcess);
             if (lastProcess == -1) {
                 lastProcess = algorithmType.getCPUHookedProcess().getId();
@@ -153,7 +155,7 @@ public class App extends Application {
             lastProcess = -1;
             tempX = 50;
         } else { // ready queue is empty and we're still counting
-            if (!(algorithmType instanceof SJFS) || accumulativeSeconds >= 1) {
+            if (!(algorithmType instanceof SJFS) || algorithmType instanceof SJFS && accumulativeSeconds >= 1) {
                 Rectangle rectangle = new Rectangle(50, 50);
                 rectangle.setFill(Color.TRANSPARENT);
                 Circle circle = new Circle(3);
@@ -199,7 +201,10 @@ public class App extends Application {
                 pauseButton.setDisable(true);
                 continueButton.setDisable(true);
                 addProcessButton.setDisable(false);
-                rrQuantumSpinBox.setDisable(currentSchedulerAlgorithm != SchedulerAlgorithm.RR);
+                if (currentSchedulerAlgorithm == SchedulerAlgorithm.RR)
+                    rrQuantumSpinBox.setDisable(false);
+                else
+                    rrQuantumSpinBox.setDisable(true);
                 generateAverageWaitingTimeButton.setDisable(true);
                 generateAverageTurnaroundTimeButton.setDisable(true);
                 break;
@@ -209,7 +214,10 @@ public class App extends Application {
                 pauseButton.setDisable(true);
                 continueButton.setDisable(false);
                 addProcessButton.setDisable(false);
-                rrQuantumSpinBox.setDisable(currentSchedulerAlgorithm != SchedulerAlgorithm.RR);
+                if (currentSchedulerAlgorithm == SchedulerAlgorithm.RR)
+                    rrQuantumSpinBox.setDisable(false);
+                else
+                    rrQuantumSpinBox.setDisable(true);
                 generateAverageWaitingTimeButton.setDisable(false);
                 generateAverageTurnaroundTimeButton.setDisable(false);
                 break;
