@@ -121,35 +121,31 @@ public class App extends Application {
         return accumulativeSeconds;
     }
 
-    /*
-     * 
-     * Timer function.
-     */
-    int tempX = 50, lastProcess = -1, lastTime = 0, Fathy = -1;
+    int tempX = 50, lastProcess = -1, lastTime = 0, tempRR=0;
     Color lastColor;
 
     private void handleTimelineEvent(ActionEvent event) {
-        // if(algorithmType instanceof RoundRobinScheduler) algorithmType.executeProcess();
-
-        //  && algorithmType.getCPUHookedProcess().getArrivalTime() <= accumulativeSeconds
 
         if (algorithmType.isCPUBuzy() && algorithmType.getCPUHookedProcess().getArrivalTime() <= accumulativeSeconds) {
-            Label label = new Label("P" + lastProcess);
-            if (lastProcess == -1) {
-                System.out.println("lastProcess == -1: ");
+            if(tempRR>0) {
+                tempX += 50;
+                tempRR--;
+            }
+            else if (lastProcess == -1) {
+                if(algorithmType instanceof RoundRobinScheduler) tempRR=Math.min(2, algorithmType.getCPUHookedProcess().getBurstTime())-1;
                 lastProcess = algorithmType.getCPUHookedProcess().getId();
                 lastTime = accumulativeSeconds + (algorithmType instanceof SJFS ? -1 : 0);
                 lastColor = algorithmType.getCPUHookedProcess().getColor();
             } else if (lastProcess == algorithmType.getCPUHookedProcess().getId()) {
-                System.out.println("lastProcess == algorithmType.getCPUHookedProcess().getId(): ");
+                if(algorithmType instanceof RoundRobinScheduler) tempRR=Math.min(2, algorithmType.getCPUHookedProcess().getBurstTime())-1;
                 tempX += 50;
             }
             else {
-                System.out.println("else: ");
-                System.out.println("before else");
+                Label label = new Label("P" + lastProcess);
                 createRectangle(label);
                 tempX = 50;
                 lastProcess = algorithmType.getCPUHookedProcess().getId();
+                if(algorithmType instanceof RoundRobinScheduler) tempRR=Math.min(2, algorithmType.getCPUHookedProcess().getBurstTime())-1;
                 lastTime = accumulativeSeconds + (algorithmType instanceof SJFS ? -1 : 0);
                 lastColor = algorithmType.getCPUHookedProcess().getColor();
             }
@@ -158,15 +154,11 @@ public class App extends Application {
             ganttChart.adjustView(); // TODO fix here
         } else if (lastProcess != -1) {
             Label label = new Label("P" + lastProcess);
-            System.out.println("before lastProcess != -1");
-            if (algorithmType.isCPUBuzy()) System.out.println("id: "+algorithmType.getCPUHookedProcess().getId());
-            else System.out.println("id: idle");
             createRectangle(label);
             lastProcess = -1;
             tempX = 50;
         } else { // ready queue is empty and we're still counting
-            System.out.println("lastProcess: "+lastProcess);
-            if (!(algorithmType instanceof SJFS) || algorithmType instanceof SJFS && accumulativeSeconds >= 1) {
+            if (!(algorithmType instanceof SJFS) || accumulativeSeconds >= 1) {
                 Rectangle rectangle = new Rectangle(50, 50);
                 rectangle.setFill(Color.TRANSPARENT);
                 Circle circle = new Circle(3);
@@ -176,8 +168,7 @@ public class App extends Application {
                 ganttChart.getChildren().add(stackPane);
             }
         }
-
-        algorithmType.executeProcess();
+        if(tempRR==0)  algorithmType.executeProcess();
 
         System.out.println("currentTime from app: "+accumulativeSeconds);
 
@@ -216,10 +207,7 @@ public class App extends Application {
                 pauseButton.setDisable(true);
                 continueButton.setDisable(true);
                 addProcessButton.setDisable(false);
-                if (currentSchedulerAlgorithm == SchedulerAlgorithm.RR)
-                    rrQuantumSpinBox.setDisable(false);
-                else
-                    rrQuantumSpinBox.setDisable(true);
+                rrQuantumSpinBox.setDisable(currentSchedulerAlgorithm != SchedulerAlgorithm.RR);
                 generateAverageWaitingTimeButton.setDisable(true);
                 generateAverageTurnaroundTimeButton.setDisable(true);
                 break;
@@ -229,10 +217,7 @@ public class App extends Application {
                 pauseButton.setDisable(true);
                 continueButton.setDisable(false);
                 addProcessButton.setDisable(false);
-                if (currentSchedulerAlgorithm == SchedulerAlgorithm.RR)
-                    rrQuantumSpinBox.setDisable(false);
-                else
-                    rrQuantumSpinBox.setDisable(true);
+                rrQuantumSpinBox.setDisable(currentSchedulerAlgorithm != SchedulerAlgorithm.RR);
                 generateAverageWaitingTimeButton.setDisable(false);
                 generateAverageTurnaroundTimeButton.setDisable(false);
                 break;
@@ -409,7 +394,7 @@ public class App extends Application {
                 break;
             case RR:
                 processesIdTracker = 0;
-                algorithmType = new RoundRobinScheduler(rrQuantumSpinBox.getValue());
+                algorithmType = new RoundRobinScheduler(2);
                 currentSchedulerAlgorithm = SchedulerAlgorithm.RR;
                 currentSchedulerState = SchedulerState.INITIALIZATION;
                 updateLook();

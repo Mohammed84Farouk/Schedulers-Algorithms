@@ -11,7 +11,6 @@ import javafx.scene.paint.Color;
 public class RoundRobinScheduler implements AlgorithmType{
 
     private Queue<Process> queue1;
-    private Queue<Process> queue2;
     private int timeQuantum;
     private CPU cpu;
     int time = 0;
@@ -20,7 +19,6 @@ public class RoundRobinScheduler implements AlgorithmType{
 
     public RoundRobinScheduler(int timeQuantum) {
         this.queue1 = new LinkedList<>();
-        this.queue2 = new LinkedList<>();
         this.timeQuantum = timeQuantum;
         time = 0; 
     }
@@ -36,42 +34,24 @@ public class RoundRobinScheduler implements AlgorithmType{
     }
     @Override
     public void executeProcess() {
-        if (!queue1.isEmpty() || !queue2.isEmpty()) {
+        if (!queue1.isEmpty()) {
             Process currentProcess;
-            if (!queue1.isEmpty() && (queue1.peek().getArrivalTime() <= App.getCurrentTime())) {
-                currentProcess = queue1.poll();
-            } else if(!queue2.isEmpty() && (queue2.peek().getArrivalTime() <= App.getCurrentTime())){
-                currentProcess = queue2.poll();
-            }
-            else{
-                if (!queue1.isEmpty() && !(queue1.peek().getArrivalTime() <= App.getCurrentTime())) {
-                    System.out.println(App.getCurrentTime() + "HHH");
-                    queue2.add(queue1.poll());
-                } else if(!queue2.isEmpty() && !(queue2.peek().getArrivalTime() <= App.getCurrentTime())){
-                    System.out.println(App.getCurrentTime() + "zzz");
-                    queue1.add(queue2.poll());
-                }
-                return;
-            }
+            currentProcess = queue1.poll();
+            System.out.println( " burst:" + currentProcess.getBurstTime()+ " currentTime:" + App.getCurrentTime()+ " arrival:" + currentProcess.getArrivalTime());
+            if(currentProcess.getArrivalTime()>App.getCurrentTime()) return;
             int runTime = Math.min(timeQuantum, currentProcess.getBurstTime());
             time += runTime;
             currentProcess.runProcess(runTime);
-            System.out.println("Arrivial:" + currentProcess.getArrivalTime() + " App Current:"+App.getCurrentTime());
+            System.out.println("Arrival:" + currentProcess.getArrivalTime() + " App Current:"+App.getCurrentTime() + " Process ID:" + currentProcess.getId() + " burst:" + currentProcess.getBurstTime());
             if (currentProcess.isFinished()) {
                 currentProcess.setTurnAroundTime(time - currentProcess.getArrivalTime());
                 totalturnaroundtime += currentProcess.getTurnAroundTime();
                 currentProcess.setWaitingTime(currentProcess.getTurnAroundTime() - currentProcess.getBurstTime());
                 totalwaitingtime += currentProcess.getWaitingTime();
-                System.out.println("Process " + currentProcess.getId() + " finished at time " + App.getCurrentTime());
+                System.out.println("Process " + currentProcess.getId() + " finished at time " + App.getCurrentTime() +  " burst:" + currentProcess.getBurstTime());
             } else {
-                if (currentProcess.getLastQueue() == 1) {
-                    currentProcess.setLastQueue(2);
-                    queue2.add(currentProcess);
-                } else {
-                    currentProcess.setLastQueue(1);
-                    queue1.add(currentProcess);
-                }
-                System.out.println("Process " + currentProcess.getId() + " is executing at time " + App.getCurrentTime());
+                queue1.add(currentProcess);
+                System.out.println("Process " + currentProcess.getId() + " is executing at time " + App.getCurrentTime() + " burst:" + currentProcess.getBurstTime());
             }
         }
     }
@@ -85,19 +65,18 @@ public class RoundRobinScheduler implements AlgorithmType{
     }
     @Override
     public Process getCPUHookedProcess() {
-        Process currentProcess;
+        Process currentProcess = null;
         if (!queue1.isEmpty()) {
             currentProcess = queue1.peek();
-        } else {
-            currentProcess = queue2.peek();
         }
+        assert currentProcess != null;
         System.out.println("getCPUHookedProcess() "+currentProcess);
         return currentProcess;
     }
 
     @Override
     public boolean isCPUBuzy() {
-        if (!queue1.isEmpty() || !queue2.isEmpty()) {
+        if (!queue1.isEmpty()) {
             System.out.println("isCPUBuzy() true");
             return true;
         } else {
