@@ -121,31 +121,37 @@ public class App extends Application {
         return accumulativeSeconds;
     }
 
-    int tempX = 50, lastProcess = -1, lastTime = 0, tempRR=0;
+    int tempX = 50, lastProcess = -1, lastTime = 0, tempRR = 0;
     Color lastColor;
 
     private void handleTimelineEvent(ActionEvent event) {
 
+        if (algorithmType instanceof PreemptivePriority) {
+            algorithmType.checkFutureArrivalProcessesInReadyQueue();
+        }
+
         if (algorithmType.isCPUBuzy() && algorithmType.getCPUHookedProcess().getArrivalTime() <= accumulativeSeconds) {
-            if(tempRR>0) {
+            if (tempRR > 0) {
                 tempX += 50;
                 tempRR--;
-            }
-            else if (lastProcess == -1) {
-                if(algorithmType instanceof RoundRobinScheduler) tempRR=Math.min(2, algorithmType.getCPUHookedProcess().getBurstTime())-1;
+            } else if (lastProcess == -1) {
+                if (algorithmType instanceof RoundRobinScheduler)
+                    tempRR = Math.min(rrQuantumSpinBox.getValue(), algorithmType.getCPUHookedProcess().getBurstTime())
+                            - 1;
                 lastProcess = algorithmType.getCPUHookedProcess().getId();
                 lastTime = accumulativeSeconds + (algorithmType instanceof SJFS ? -1 : 0);
                 lastColor = algorithmType.getCPUHookedProcess().getColor();
             } else if (lastProcess == algorithmType.getCPUHookedProcess().getId()) {
-                if(algorithmType instanceof RoundRobinScheduler) tempRR=Math.min(2, algorithmType.getCPUHookedProcess().getBurstTime())-1;
+                if (algorithmType instanceof RoundRobinScheduler)
+                    tempRR = Math.min(rrQuantumSpinBox.getValue(), algorithmType.getCPUHookedProcess().getBurstTime()) - 1;
                 tempX += 50;
-            }
-            else {
+            } else {
                 Label label = new Label("P" + lastProcess);
                 createRectangle(label);
                 tempX = 50;
                 lastProcess = algorithmType.getCPUHookedProcess().getId();
-                if(algorithmType instanceof RoundRobinScheduler) tempRR=Math.min(2, algorithmType.getCPUHookedProcess().getBurstTime())-1;
+                if (algorithmType instanceof RoundRobinScheduler)
+                    tempRR = Math.min(rrQuantumSpinBox.getValue(), algorithmType.getCPUHookedProcess().getBurstTime()) - 1;
                 lastTime = accumulativeSeconds + (algorithmType instanceof SJFS ? -1 : 0);
                 lastColor = algorithmType.getCPUHookedProcess().getColor();
             }
@@ -168,9 +174,10 @@ public class App extends Application {
                 ganttChart.getChildren().add(stackPane);
             }
         }
-        if(tempRR==0)  algorithmType.executeProcess();
+        if (tempRR == 0)
+            algorithmType.executeProcess();
 
-        System.out.println("currentTime from app: "+accumulativeSeconds);
+        System.out.println("currentTime from app: " + accumulativeSeconds);
 
         accumulativeSeconds++;
         String hoursStr = String.format("%02d", (accumulativeSeconds / 3600));
@@ -196,7 +203,7 @@ public class App extends Application {
         stackPane.getChildren().addAll(rectangle, label, hbox);
         ganttChart.getChildren().add(stackPane);
 
-        System.out.println("tempX: "+tempX);
+        System.out.println("tempX: " + tempX);
     }
 
     private void updateLook() {
@@ -287,14 +294,15 @@ public class App extends Application {
         if (currentSchedulerState == SchedulerState.RUNNING)
             timeline.pause();
 
-        BooleanWrapper isSaved = new BooleanWrapper(false);    
+        BooleanWrapper isSaved = new BooleanWrapper(false);
 
         StringWrapper processPriority = new StringWrapper();
         StringWrapper processBurst = new StringWrapper();
         ProcessColor processColor = new ProcessColor(Color.RED);
         BooleanWrapper isFutureProcess = new BooleanWrapper(false);
         StringWrapper processArrival = new StringWrapper();
-        AddProcessDialog addProcessDialog = new AddProcessDialog(currentSchedulerAlgorithm,isSaved,processPriority, processBurst, processColor,
+        AddProcessDialog addProcessDialog = new AddProcessDialog(currentSchedulerAlgorithm, isSaved, processPriority,
+                processBurst, processColor,
                 isFutureProcess, processArrival);
 
         addProcessDialog.showDialog();
@@ -477,7 +485,7 @@ public class App extends Application {
         rrQuantumSpinBox.place(schedulersControllers);
 
         rrQuantumSpinBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            ((RoundRobinScheduler)algorithmType).setQuantum(rrQuantumSpinBox.getValue());
+            ((RoundRobinScheduler) algorithmType).setQuantum(rrQuantumSpinBox.getValue());
         });
 
         schedulersControllers.setSpacing(10);

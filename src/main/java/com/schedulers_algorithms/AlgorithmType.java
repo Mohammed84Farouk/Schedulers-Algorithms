@@ -8,4 +8,5 @@ public interface AlgorithmType {
     public void executeProcess();
     public double getAverageWaitingTime();
     public double getAverageTurnaroundTime();
+    public void checkFutureArrivalProcessesInReadyQueue();
 }

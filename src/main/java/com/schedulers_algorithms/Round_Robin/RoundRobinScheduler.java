@@ -125,4 +125,10 @@ public class RoundRobinScheduler implements AlgorithmType{
         scheduler.addProcessToReadyQueue(p3);
         scheduler.executeProcess();
     }
+
+    @Override
+    public void checkFutureArrivalProcessesInReadyQueue() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'checkFutureArrivalProcessesInReadyQueue'");
+    }
 }
