@@ -13,6 +13,7 @@ public class FirstComeFirstServed implements AlgorithmType {
 
     private Vector<Process> readyQueue;
     private int currentTime = 0;
+
     public CPU getCpu() {
         return cpu;
     }
@@ -39,16 +40,17 @@ public class FirstComeFirstServed implements AlgorithmType {
 
     private Vector<Process> queue1;
     private Vector<Process> queue2;
+
     public FirstComeFirstServed() {
         cpu = new CPU();
-        queue1= new Vector<Process>();
-        queue2= new Vector<Process>();
+        queue1 = new Vector<Process>();
+        queue2 = new Vector<Process>();
         readyQueue = new Vector<Process>();
     }
 
     @Override
     public void addProcessToReadyQueue(Process process) {
-        //currentTime = App.getCurrentTime();
+        // currentTime = App.getCurrentTime();
         switch (cpu.getState()) {
             case IDLE:
                 if (process.getArrivalTime() <= currentTime) {
@@ -92,8 +94,10 @@ public class FirstComeFirstServed implements AlgorithmType {
 
         if (cpu.getHookedProcess().isFinished()) {
             cpu.getHookedProcess().setTurnAroundTime(currentTime - cpu.getHookedProcess().getArrivalTime() + 1);
-            // totalTurnaroundTime += currentTime - cpu.getHookedProcess().getArrivalTime() + 1;
-            // totalWaitingTime += cpu.getHookedProcess().getTurnAroundTime() + cpu.getHookedProcess().getWaitingTime();
+            // totalTurnaroundTime += currentTime - cpu.getHookedProcess().getArrivalTime()
+            // + 1;
+            // totalWaitingTime += cpu.getHookedProcess().getTurnAroundTime() +
+            // cpu.getHookedProcess().getWaitingTime();
             cpu.switchState(CPUState.IDLE);
             cpu.unHookProcess();
             hookProcessOnCPUFromReadyQueue();
@@ -104,22 +108,23 @@ public class FirstComeFirstServed implements AlgorithmType {
         if (readyQueue.size() == 0)
             return false;
 
+        int arrivalValue = Integer.MAX_VALUE;
         int processIndex = -1;
 
         for (int i = 0; i < readyQueue.size(); i++) {
-            if (readyQueue.elementAt(i).getArrivalTime() <= currentTime) {
+            if (readyQueue.elementAt(i).getArrivalTime() <= currentTime
+                    && readyQueue.elementAt(i).getArrivalTime() < arrivalValue) {
+                arrivalValue = readyQueue.elementAt(i).getArrivalTime();   
                 processIndex = i;
-                break;
             }
-        }    
+        }
 
-        if (processIndex != -1) {
+        if (arrivalValue != Integer.MAX_VALUE) {
             cpu.hookProcess(readyQueue.elementAt(processIndex));
             cpu.switchState(CPUState.BUZY);
             readyQueue.removeElementAt(processIndex);
             return true;
         }
-        
 
         return false;
     }
@@ -137,7 +142,7 @@ public class FirstComeFirstServed implements AlgorithmType {
         }
         return (double) totalWaitingTime / numProcesses;
     }
-    
+
     @Override
     public double getAverageTurnaroundTime() {
         int totalTurnaroundTime = 0;
@@ -157,6 +162,9 @@ public class FirstComeFirstServed implements AlgorithmType {
     public void checkFutureArrivalProcessesInReadyQueue() {
         currentTime = App.getCurrentTime(); // Comment this line before running tests
         // System.out.println("before size(): "+readyQueue.size());
+
+        if (cpu.isBuzy())
+            return;
 
         int processIndex = -1;
         for (int i = 0; i < readyQueue.size(); i++) {
@@ -183,17 +191,23 @@ public class FirstComeFirstServed implements AlgorithmType {
             }
         }
     }
-    
+
+    @Override
+    public boolean isReadyQueueEmpty() {
+        return readyQueue.isEmpty();
+    }
 
     // @Override
     // public double getAverageWaitingTime() {
-    //     // TODO Auto-generated method stub
-    //     throw new UnsupportedOperationException("Unimplemented method 'getAverageWaitingTime'");
+    // // TODO Auto-generated method stub
+    // throw new UnsupportedOperationException("Unimplemented method
+    // 'getAverageWaitingTime'");
     // }
 
     // @Override
     // public double getAverageTurnaroundTime() {
-    //     // TODO Auto-generated method stub
-    //     throw new UnsupportedOperationException("Unimplemented method 'getAverageTurnaroundTime'");
+    // // TODO Auto-generated method stub
+    // throw new UnsupportedOperationException("Unimplemented method
+    // 'getAverageTurnaroundTime'");
     // }
 }

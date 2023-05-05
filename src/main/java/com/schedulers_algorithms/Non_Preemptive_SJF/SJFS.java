@@ -117,6 +117,11 @@ public class SJFS implements AlgorithmType {
         throw new UnsupportedOperationException("Unimplemented method 'checkFutureArrivalProcessesInReadyQueue'");
     }
 
+    @Override
+    public boolean isReadyQueueEmpty() {
+        return readyQueue.isEmpty();
+    }
+
     // @Override
     // public double getAverageWaitingTime() {
     //     // TODO Auto-generated method stub

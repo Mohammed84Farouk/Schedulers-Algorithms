@@ -256,4 +256,9 @@ public class PreemptivePriority implements AlgorithmType {
     public double getAverageTurnaroundTime() {
         return totalTurnaroundTime / processesCount;
     }
+
+    @Override
+    public boolean isReadyQueueEmpty() {
+        return readyQueue.isEmpty();
+    }
 }

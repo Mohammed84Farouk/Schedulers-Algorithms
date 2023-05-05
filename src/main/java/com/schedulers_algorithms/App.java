@@ -40,6 +40,7 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.Alert.AlertType;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * JavaFX App
@@ -121,12 +122,20 @@ public class App extends Application {
         return accumulativeSeconds;
     }
 
+    enum ViewingPhase {
+        DRAWING_PROCESS,
+        DRAWING_EMPTY,
+        CALCULATING
+    };
+
+    private ViewingPhase currentViewingPhase = ViewingPhase.DRAWING_EMPTY;
+
     int tempX = 50, lastProcess = -1, lastTime = 0, tempRR = 0;
     Color lastColor;
 
     private void handleTimelineEvent(ActionEvent event) {
 
-        if (algorithmType instanceof PreemptivePriority) {
+        if (algorithmType instanceof PreemptivePriority || algorithmType instanceof FirstComeFirstServed) {
             algorithmType.checkFutureArrivalProcessesInReadyQueue();
         }
 
@@ -175,13 +184,9 @@ public class App extends Application {
             }
         }
 
-        if (algorithmType instanceof FirstComeFirstServed) {
-            algorithmType.checkFutureArrivalProcessesInReadyQueue();
-        }
-
         if (tempRR == 0)
             algorithmType.executeProcess();
-
+        
         System.out.println("currentTime from app: " + accumulativeSeconds);
 
         accumulativeSeconds++;
@@ -344,6 +349,23 @@ public class App extends Application {
         processDetailsTable.addProcess(currentSchedulerAlgorithm, process);
 
         algorithmType.addProcessToReadyQueue(process);
+
+        // processDetailsTable.addProcess(currentSchedulerAlgorithm, new Process(0, 0, 3, Color.rgb(135, 206, 250)));
+        // processDetailsTable.addProcess(currentSchedulerAlgorithm, new Process(1, 4, 5, Color.rgb(135, 206, 250)));
+        // algorithmType.addProcessToReadyQueue(new Process(0, 0, 3,Color.rgb(135, 206, 250)));
+        // algorithmType.addProcessToReadyQueue(new Process(1, 4, 5,Color.rgb(135, 206, 250)));
+
+        // processDetailsTable.addProcess(currentSchedulerAlgorithm, new Process(0, 5, 5, Color.rgb(135, 206, 250)));
+        // processDetailsTable.addProcess(currentSchedulerAlgorithm, new Process(1, 6, 4, Color.rgb(135, 206, 250)));
+        // processDetailsTable.addProcess(currentSchedulerAlgorithm, new Process(2, 0, 3 , Color.rgb(135, 206, 250)));
+        // processDetailsTable.addProcess(currentSchedulerAlgorithm, new Process(3, 6, 2,Color.rgb(135, 206, 250)));
+        // processDetailsTable.addProcess(currentSchedulerAlgorithm, new Process(4, 5, 4,Color.rgb(135, 206, 250)));
+
+        // algorithmType.addProcessToReadyQueue(new Process(0, 4, 5,Color.rgb(135, 206, 250)));
+        // algorithmType.addProcessToReadyQueue(new Process(1, 6, 4,Color.rgb(135, 206, 250)));
+        // algorithmType.addProcessToReadyQueue(new Process(2, 0, 3,Color.rgb(135, 206, 250)));
+        // algorithmType.addProcessToReadyQueue(new Process(3, 6, 2,Color.rgb(135, 206, 250)));
+        // algorithmType.addProcessToReadyQueue(new Process(4, 5, 4,Color.rgb(135, 206, 250)));
 
         if (currentSchedulerState == SchedulerState.RUNNING)
             timeline.play();

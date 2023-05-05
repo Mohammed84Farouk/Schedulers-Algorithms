@@ -131,4 +131,9 @@ public class RoundRobinScheduler implements AlgorithmType{
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'checkFutureArrivalProcessesInReadyQueue'");
     }
+
+    @Override
+    public boolean isReadyQueueEmpty() {
+        return queue1.isEmpty();
+    }
 }

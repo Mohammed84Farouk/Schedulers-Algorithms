@@ -85,6 +85,7 @@ public class AddProcessDialog extends Stage {
             SpinnerValueFactory<Integer> processPrioritySpinnerFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
                     0, 7, 0, 1);
             processPrioritySpinner.setValueFactory(processPrioritySpinnerFactory);
+            processPrioritySpinner.setEditable(true);
             processPriorityHBox.getChildren().addAll(processPriorityLabel, processPrioritySpinner);
 
             mainLayout.getChildren().add(processPriorityHBox);
@@ -104,6 +105,7 @@ public class AddProcessDialog extends Stage {
         SpinnerValueFactory<Integer> processBurstSpinnerFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,
                 50, 1, 1);
         processBurstSpinner.setValueFactory(processBurstSpinnerFactory);
+        processBurstSpinner.setEditable(true);
         processBurstHBox.getChildren().addAll(processBurstLabel, processBurstSpinner);
         processBurst.setValue(processBurstSpinner.getValue().toString());
 
@@ -140,6 +142,7 @@ public class AddProcessDialog extends Stage {
         SpinnerValueFactory<Integer> processArrivalSpinnerFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
                 0, 100, 0, 1);
         processArrivalSpinner.setValueFactory(processArrivalSpinnerFactory);
+        processArrivalSpinner.setEditable(true);
         processArrivalHBox.getChildren().addAll(processArrivalLabel, processArrivalSpinner, checkBox);
         processArrival.setValue(processArrivalSpinner.getValue().toString());
 
