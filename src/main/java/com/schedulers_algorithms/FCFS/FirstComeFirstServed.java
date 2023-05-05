@@ -126,6 +126,12 @@ public class FirstComeFirstServed implements AlgorithmType {
         }
         return (double) totalTurnaroundTime / numProcesses;
     }
+
+    @Override
+    public void checkFutureArrivalProcessesInReadyQueue() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'checkFutureArrivalProcessesInReadyQueue'");
+    }
     
 
     // @Override

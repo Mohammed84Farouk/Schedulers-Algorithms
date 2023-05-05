@@ -133,12 +133,16 @@ public class App extends Application {
 
         //  && algorithmType.getCPUHookedProcess().getArrivalTime() <= accumulativeSeconds
 
-        if (algorithmType.isCPUBuzy() && algorithmType.getCPUHookedProcess().getArrivalTime() <= accumulativeSeconds) {
+        if (algorithmType instanceof PreemptivePriority) {
+            algorithmType.checkFutureArrivalProcessesInReadyQueue();
+        }
+
+        if (algorithmType.isCPUBuzy() && algorithmType.getCPUHookedProcess().getArrivalTime() <= getCurrentTime()) {
             Label label = new Label("P" + lastProcess);
             if (lastProcess == -1) {
                 System.out.println("lastProcess == -1: ");
                 lastProcess = algorithmType.getCPUHookedProcess().getId();
-                lastTime = accumulativeSeconds + (algorithmType instanceof SJFS ? -1 : 0);
+                lastTime = getCurrentTime() + (algorithmType instanceof SJFS ? -1 : 0);
                 lastColor = algorithmType.getCPUHookedProcess().getColor();
             } else if (lastProcess == algorithmType.getCPUHookedProcess().getId()) {
                 System.out.println("lastProcess == algorithmType.getCPUHookedProcess().getId(): ");
@@ -150,7 +154,7 @@ public class App extends Application {
                 createRectangle(label);
                 tempX = 50;
                 lastProcess = algorithmType.getCPUHookedProcess().getId();
-                lastTime = accumulativeSeconds + (algorithmType instanceof SJFS ? -1 : 0);
+                lastTime = getCurrentTime() + (algorithmType instanceof SJFS ? -1 : 0);
                 lastColor = algorithmType.getCPUHookedProcess().getColor();
             }
             lastProcess = algorithmType.getCPUHookedProcess().getId();
@@ -166,7 +170,7 @@ public class App extends Application {
             tempX = 50;
         } else { // ready queue is empty and we're still counting
             System.out.println("lastProcess: "+lastProcess);
-            if (!(algorithmType instanceof SJFS) || algorithmType instanceof SJFS && accumulativeSeconds >= 1) {
+            if (!(algorithmType instanceof SJFS) || algorithmType instanceof SJFS && getCurrentTime() >= 1) {
                 Rectangle rectangle = new Rectangle(50, 50);
                 rectangle.setFill(Color.TRANSPARENT);
                 Circle circle = new Circle(3);
@@ -179,12 +183,12 @@ public class App extends Application {
 
         algorithmType.executeProcess();
 
-        System.out.println("currentTime from app: "+accumulativeSeconds);
+        System.out.println("currentTime from app: "+getCurrentTime());
 
         accumulativeSeconds++;
-        String hoursStr = String.format("%02d", (accumulativeSeconds / 3600));
-        String minutesStr = String.format("%02d", ((accumulativeSeconds / 60) % 60));
-        String secondsStr = String.format("%02d", (accumulativeSeconds % 60));
+        String hoursStr = String.format("%02d", (getCurrentTime() / 3600));
+        String minutesStr = String.format("%02d", ((getCurrentTime() / 60) % 60));
+        String secondsStr = String.format("%02d", (getCurrentTime() % 60));
 
         timer.setText(hoursStr + ':' + minutesStr + ':' + secondsStr);
     }

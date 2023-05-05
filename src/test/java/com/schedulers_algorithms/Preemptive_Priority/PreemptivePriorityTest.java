@@ -413,6 +413,78 @@ public class PreemptivePriorityTest {
                 index++;
             }
         }
+    }
 
+    @Test
+    public void testExecuteProcess_initialProcesses_temp2() {
+        clearCPU();
+        clearReadyQueue();
+
+        preemptivePriority.setCurrentTime(0);
+
+        ArrayList<Process> processes = new ArrayList<Process>();
+        processes.add(new Process(0, 0, 4,5));
+        processes.add(new Process(1, 1, 3,4));
+        processes.add(new Process(2, 2, 1,3));
+        processes.add(new Process(3, 3, 5,2));
+        processes.add(new Process(4, 4, 2,2));
+        
+        for (int i = 0 ; i < processes.size() ; i++) {
+            preemptivePriority.addProcessToReadyQueue(processes.get(i));
+        }
+        
+        ArrayList<Integer> priorities = new ArrayList<Integer>();
+        priorities.add(5);
+        priorities.add(4);
+        priorities.add(3);
+        priorities.add(2);
+        priorities.add(2);
+        priorities.add(4);
+        priorities.add(5);
+
+        ArrayList<Integer> ids = new ArrayList<Integer>();
+        ids.add(0);
+        ids.add(1);
+        ids.add(2);
+        ids.add(3);
+        ids.add(4);
+        ids.add(1);
+        ids.add(0);
+
+        int index = 0;
+
+        Assertions.assertEquals(processes.size() - 1, preemptivePriority.getReadyQueue().size());
+        Assertions.assertEquals(true, preemptivePriority.getCpu().isBuzy());
+        Assertions.assertEquals(ids.get(index), preemptivePriority.getCPUHookedProcess().getId());
+        Assertions.assertEquals(priorities.get(index), preemptivePriority.getCPUHookedProcess().getPriority()); // 3 is the highest priority process
+        
+        boolean canCheck = false;
+        index++;
+
+        /*
+         * Run for 100 seconds
+         * 
+         */
+        for (int i = 0 ; i < 100 ; i++, preemptivePriority.setCurrentTime(i)) {
+            if (!preemptivePriority.getCpu().isBuzy()) continue;
+
+            if (preemptivePriority.getCPUHookedProcess().getBurstTime() == 1) canCheck = true;
+
+            preemptivePriority.checkFutureArrivalProcessesInReadyQueue();
+
+            preemptivePriority.executeProcess();
+
+            if (!preemptivePriority.getCpu().isBuzy()) {
+                canCheck = false;
+                continue;
+            }
+
+            if (canCheck == true) {
+                Assertions.assertEquals(ids.get(index), preemptivePriority.getCPUHookedProcess().getId());
+                Assertions.assertEquals(priorities.get(index), preemptivePriority.getCPUHookedProcess().getPriority());
+                canCheck = false;
+                index++;
+            }
+        }
     }
 }
