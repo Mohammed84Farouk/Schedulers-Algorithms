@@ -42,6 +42,15 @@ public class Process {
 		this.color = new Color(0, 0, 0, 1.0);
     }
 
+    public Process(int id, int arrivalTime, int burstTime) {
+        this.id = id;
+        this.arrivalTime = arrivalTime;
+        this.burstTime = burstTime;
+        this.priority = -1;
+        this.lastQueue = 1;
+		this.color = new Color(0, 0, 0, 1.0);
+    }
+
     public int getId() {
         return this.id;
     }

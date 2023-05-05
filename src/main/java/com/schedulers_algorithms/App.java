@@ -174,6 +174,11 @@ public class App extends Application {
                 ganttChart.getChildren().add(stackPane);
             }
         }
+
+        if (algorithmType instanceof FirstComeFirstServed) {
+            algorithmType.checkFutureArrivalProcessesInReadyQueue();
+        }
+
         if (tempRR == 0)
             algorithmType.executeProcess();
 

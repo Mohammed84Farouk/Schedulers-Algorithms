@@ -3,6 +3,7 @@ package com.schedulers_algorithms.FCFS;
 import java.util.Vector;
 
 import com.schedulers_algorithms.AlgorithmType;
+import com.schedulers_algorithms.App;
 import com.schedulers_algorithms.CPU;
 import com.schedulers_algorithms.CPU.CPUState;
 import com.schedulers_algorithms.Utils.Process;
@@ -11,6 +12,31 @@ public class FirstComeFirstServed implements AlgorithmType {
     private CPU cpu;
 
     private Vector<Process> readyQueue;
+    private int currentTime = 0;
+    public CPU getCpu() {
+        return cpu;
+    }
+
+    public int getCurrentTime() {
+        return currentTime;
+    }
+
+    public void setCurrentTime(int currentTime) {
+        this.currentTime = currentTime;
+    }
+
+    public Vector<Process> getReadyQueue() {
+        return readyQueue;
+    }
+
+    public Vector<Process> getQueue1() {
+        return queue1;
+    }
+
+    public Vector<Process> getQueue2() {
+        return queue2;
+    }
+
     private Vector<Process> queue1;
     private Vector<Process> queue2;
     public FirstComeFirstServed() {
@@ -22,26 +48,21 @@ public class FirstComeFirstServed implements AlgorithmType {
 
     @Override
     public void addProcessToReadyQueue(Process process) {
+        //currentTime = App.getCurrentTime();
         switch (cpu.getState()) {
             case IDLE:
-                cpu.switchState(CPUState.BUZY);
-                cpu.hookProcess(process);
+                if (process.getArrivalTime() <= currentTime) {
+                    cpu.hookProcess(process);
+                    cpu.switchState(CPUState.BUZY);
+                } else {
+                    hookProcessOnReadyQueue(process);
+                }
                 return;
             case BUZY:
-                hookProcessOnCPUIfHigherPriority(process);
+                hookProcessOnReadyQueue(process);
                 return;
             default:
                 return;
-        }
-    }
-
-    private void hookProcessOnCPUIfHigherPriority(Process process) {
-        
-        if (process.getPriority() < cpu.getHookedProcessPriority()) {
-            hookProcessOnReadyQueue(cpu.getHookedProcess());
-            cpu.hookProcess(process);
-        } else {
-            hookProcessOnReadyQueue(process);
         }
     }
 
@@ -66,10 +87,13 @@ public class FirstComeFirstServed implements AlgorithmType {
                 return;
         }
 
-        int hookedProcessBurstTime = cpu.getHookedProcess().getBurstTime();
-        cpu.getHookedProcess().setBurstTime(hookedProcessBurstTime - 1);
+        cpu.getHookedProcess().runProcess(1);
+        cpu.getHookedProcess().setWaitingTime(cpu.getHookedProcess().getWaitingTime() - 1);
 
-        if ((hookedProcessBurstTime - 1) == 0) {
+        if (cpu.getHookedProcess().isFinished()) {
+            cpu.getHookedProcess().setTurnAroundTime(currentTime - cpu.getHookedProcess().getArrivalTime() + 1);
+            // totalTurnaroundTime += currentTime - cpu.getHookedProcess().getArrivalTime() + 1;
+            // totalWaitingTime += cpu.getHookedProcess().getTurnAroundTime() + cpu.getHookedProcess().getWaitingTime();
             cpu.switchState(CPUState.IDLE);
             cpu.unHookProcess();
             hookProcessOnCPUFromReadyQueue();
@@ -80,22 +104,24 @@ public class FirstComeFirstServed implements AlgorithmType {
         if (readyQueue.size() == 0)
             return false;
 
-        int highestPriorityProcessValue = Integer.MAX_VALUE;
-        int highestPriorityProcessIndex = Integer.MAX_VALUE;
+        int processIndex = -1;
+
         for (int i = 0; i < readyQueue.size(); i++) {
-            if (readyQueue.elementAt(i).getArrivalTime() < highestPriorityProcessValue) {
-                highestPriorityProcessIndex = i;
-                highestPriorityProcessValue = readyQueue.elementAt(i).getArrivalTime();
+            if (readyQueue.elementAt(i).getArrivalTime() <= currentTime) {
+                processIndex = i;
+                break;
             }
-        }
+        }    
 
-        if (highestPriorityProcessIndex != Integer.MAX_VALUE) {
-            cpu.hookProcess(readyQueue.elementAt(highestPriorityProcessIndex));
+        if (processIndex != -1) {
+            cpu.hookProcess(readyQueue.elementAt(processIndex));
             cpu.switchState(CPUState.BUZY);
-            readyQueue.removeElementAt(highestPriorityProcessIndex);
+            readyQueue.removeElementAt(processIndex);
+            return true;
         }
+        
 
-        return true;
+        return false;
     }
 
     public double getAverageWaitingTime() {
@@ -129,8 +155,33 @@ public class FirstComeFirstServed implements AlgorithmType {
 
     @Override
     public void checkFutureArrivalProcessesInReadyQueue() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'checkFutureArrivalProcessesInReadyQueue'");
+        currentTime = App.getCurrentTime(); // Comment this line before running tests
+        // System.out.println("before size(): "+readyQueue.size());
+
+        int processIndex = -1;
+        for (int i = 0; i < readyQueue.size(); i++) {
+            if (readyQueue.elementAt(i).getArrivalTime() == currentTime) {
+                processIndex = i;
+                break;
+            }
+        }
+
+        if (processIndex != -1) {
+            Process futureProcess = readyQueue.elementAt(processIndex);
+            readyQueue.removeElementAt(processIndex);
+
+            switch (cpu.getState()) {
+                case IDLE:
+                    cpu.hookProcess(futureProcess);
+                    cpu.switchState(CPUState.BUZY);
+                    break;
+                case BUZY:
+                    hookProcessOnReadyQueue(futureProcess);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
     
 

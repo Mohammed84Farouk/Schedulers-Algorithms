@@ -236,10 +236,10 @@ public class PreemptivePriority implements AlgorithmType {
             cpu.hookProcess(readyQueue.elementAt(highestPriorityProcessIndex));
             cpu.switchState(CPUState.BUZY);
             readyQueue.removeElementAt(highestPriorityProcessIndex);
-        } else
-            return false;
+            return true;
+        }
 
-        return true;
+        return false;
     }
 
     private void ageProcesses() {
