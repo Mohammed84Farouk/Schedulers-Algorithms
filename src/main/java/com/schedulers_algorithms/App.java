@@ -140,7 +140,7 @@ public class App extends Application {
                 && (lastProcessId != algorithmType.getCPUHookedProcess().getId()) && lastProcessId != -1) {
             Label label = new Label("P" + lastProcessId);
             createRectangle(label);
-            processWidth = 50;
+            processWidth = 0;
             lastProcessId = algorithmType.getCPUHookedProcess().getId();
             // if (algorithmType instanceof RoundRobinScheduler)
             //     tempRR = Math.min(rrQuantumSpinBox.getValue(),
@@ -148,8 +148,6 @@ public class App extends Application {
             //             - 1;
             lastTime = App.getCurrentTime() + (algorithmType instanceof SJFS ? -1 : 0);
             lastColor = algorithmType.getCPUHookedProcess().getColor();
-
-            if (algorithmType instanceof RoundRobinScheduler) processWidth = 0;
         }
 
         if (algorithmType.isCPUBuzy() && algorithmType.getCPUHookedProcess().getArrivalTime() <= App.getCurrentTime()) {
@@ -363,23 +361,23 @@ public class App extends Application {
         // algorithmType.addProcessToReadyQueue(new Process(1, 4, 5,Color.rgb(135, 206,
         // 250)));
 
-        Process process1 = new Process(0, 0, 2, Color.rgb(135, 206, 250));
-        Process process2 = new Process(1, 3, 3, Color.rgb(135, 206, 250));
-        // Process process3 = new Process(2, 0, 3, Color.rgb(135, 206, 250));
-        // Process process4 = new Process(3, 6, 2, Color.rgb(135, 206, 250));
-        // Process process5 = new Process(4, 5, 4, Color.rgb(135, 206, 250));
+        Process process1 = new Process(0, 4, 5, Color.rgb(135, 206, 250));
+        Process process2 = new Process(1, 6, 4, Color.rgb(135, 206, 250));
+        Process process3 = new Process(2, 0, 3, Color.rgb(135, 206, 250));
+        Process process4 = new Process(3, 6, 2, Color.rgb(135, 206, 250));
+        Process process5 = new Process(4, 5, 4, Color.rgb(135, 206, 250));
 
         processDetailsTable.addProcess(currentSchedulerAlgorithm, process1);
         processDetailsTable.addProcess(currentSchedulerAlgorithm, process2);
-        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process3);
-        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process4);
-        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process5);
+        processDetailsTable.addProcess(currentSchedulerAlgorithm, process3);
+        processDetailsTable.addProcess(currentSchedulerAlgorithm, process4);
+        processDetailsTable.addProcess(currentSchedulerAlgorithm, process5);
 
         algorithmType.addProcessToReadyQueue(process1);
         algorithmType.addProcessToReadyQueue(process2);
-        // algorithmType.addProcessToReadyQueue(process3);
-        // algorithmType.addProcessToReadyQueue(process4);
-        // algorithmType.addProcessToReadyQueue(process5);
+        algorithmType.addProcessToReadyQueue(process3);
+        algorithmType.addProcessToReadyQueue(process4);
+        algorithmType.addProcessToReadyQueue(process5);
 
         if (currentSchedulerState == SchedulerState.RUNNING)
             timeline.play();
