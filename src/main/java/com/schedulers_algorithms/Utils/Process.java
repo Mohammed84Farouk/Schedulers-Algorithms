@@ -9,8 +9,8 @@ public class Process {
     private int arrivalTime;
     private int burstTime;
     private int priority;
-    private int waitingTime;
-    private int turnAroundTime;
+    private int waitingTime=0;
+    private int turnAroundTime=0;
     private int lastQueue;
     private boolean isPreempted = false;
 	private final Color color;
@@ -108,6 +108,9 @@ public class Process {
     }
     public void runProcess(int time) {
         burstTime -= time;
+    }
+    public void wait(int time) {
+        waitingTime += time;
     }
     public void age() {
         if (priority == 0) return;

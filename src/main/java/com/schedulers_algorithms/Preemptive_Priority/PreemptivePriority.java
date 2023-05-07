@@ -162,16 +162,18 @@ public class PreemptivePriority implements AlgorithmType {
         }
 
         cpu.getHookedProcess().runProcess(1);
-        cpu.getHookedProcess().setWaitingTime(cpu.getHookedProcess().getWaitingTime() - 1);
 
         if (cpu.getHookedProcess().isFinished()) {
-            cpu.getHookedProcess().setTurnAroundTime(currentTime - cpu.getHookedProcess().getArrivalTime() + 1);
             totalTurnaroundTime += currentTime - cpu.getHookedProcess().getArrivalTime() + 1;
-            totalWaitingTime += cpu.getHookedProcess().getTurnAroundTime() + cpu.getHookedProcess().getWaitingTime();
+            totalWaitingTime += cpu.getHookedProcess().getWaitingTime();
             cpu.switchState(CPUState.IDLE);
             cpu.unHookProcess();
-            hookProcessOnCPUFromReadyQueue(currentTime);
+            if (hookProcessOnCPUFromReadyQueue(currentTime)){
+                cpu.getHookedProcess().wait(1);
+            }
         }
+
+        increaseWaitingPeriodForProcessesInReadyQueue();
     }
 
     @Override
@@ -250,6 +252,14 @@ public class PreemptivePriority implements AlgorithmType {
         }
 
         return false;
+    }
+
+    private void increaseWaitingPeriodForProcessesInReadyQueue() {
+        for (int i = 0 ; i < readyQueue.size() ; i++) {
+            if (readyQueue.elementAt(i).getArrivalTime() <= currentTime) {
+                readyQueue.elementAt(i).wait(1);
+            }
+        }
     }
 
     private void ageProcesses() {

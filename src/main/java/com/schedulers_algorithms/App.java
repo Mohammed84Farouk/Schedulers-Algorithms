@@ -365,11 +365,11 @@ public class App extends Application {
         // Non Preemptive Priority Testcases
         // Process process1 = new Process(0, 0, 5,1, Color.rgb(135, 206, 250));
 
-        Process process2 = new Process(1, 4, 5,0, Color.rgb(135, 206, 250));
-        Process process3 = new Process(2, 6, 4,0, Color.rgb(135, 206, 250));
-        Process process4 = new Process(3, 0, 3,0, Color.rgb(135, 206, 250));
-        Process process5 = new Process(4, 6, 2,0, Color.rgb(135, 206, 250));
-        Process process6 = new Process(5, 5, 4,0, Color.rgb(135, 206, 250));
+        Process process2 = new Process(1, 0, 4,4, Color.rgb(135, 206, 250));
+        Process process3 = new Process(2, 1, 3,3, Color.rgb(135, 206, 250));
+        Process process4 = new Process(3, 2, 1,2, Color.rgb(135, 206, 250));
+        Process process5 = new Process(4, 3, 2,1, Color.rgb(135, 206, 250));
+        // Process process6 = new Process(5, 5, 4,0, Color.rgb(135, 206, 250));
 
         // Process process7 = new Process(6,0, 3,1, Color.rgb(135, 206, 250));
 
@@ -388,7 +388,7 @@ public class App extends Application {
         processDetailsTable.addProcess(currentSchedulerAlgorithm, process4);
 
         processDetailsTable.addProcess(currentSchedulerAlgorithm, process5);
-        processDetailsTable.addProcess(currentSchedulerAlgorithm, process6);
+        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process6);
         // processDetailsTable.addProcess(currentSchedulerAlgorithm, process7);
 
         // processDetailsTable.addProcess(currentSchedulerAlgorithm, process8);
@@ -406,7 +406,7 @@ public class App extends Application {
         algorithmType.addProcessToReadyQueue(process4);
 
         algorithmType.addProcessToReadyQueue(process5);
-        algorithmType.addProcessToReadyQueue(process6);
+        // algorithmType.addProcessToReadyQueue(process6);
         // algorithmType.addProcessToReadyQueue(process7);
 
         // algorithmType.addProcessToReadyQueue(process8);
