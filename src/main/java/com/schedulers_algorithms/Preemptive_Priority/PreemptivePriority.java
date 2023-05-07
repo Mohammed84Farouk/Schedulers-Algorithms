@@ -205,11 +205,17 @@ public class PreemptivePriority implements AlgorithmType {
                     cpu.switchState(CPUState.BUZY);
                     break;
                 case BUZY:
-                    hookProcessOnCPUIfHigherPriority(futureProcess);
+                    if (isPreemptive) {
+                        hookProcessOnCPUIfHigherPriority(futureProcess);
+                    } else {
+                        hookProcessOnReadyQueue(futureProcess);
+                    }
                     break;
                 default:
                     break;
             }
+
+            return;
         }
     }
 
@@ -219,16 +225,20 @@ public class PreemptivePriority implements AlgorithmType {
 
         int highestPriorityProcessValue = Integer.MAX_VALUE;
         int highestPriorityProcessIndex = Integer.MAX_VALUE;
+        int minArrivalTimeValue = currentTime;
+
         for (int i = 0; i < readyQueue.size(); i++) {
-            if (readyQueue.elementAt(i).getPriority() < highestPriorityProcessValue
-                    && readyQueue.elementAt(i).getArrivalTime() <= currentTime
-                    || readyQueue.elementAt(i).getPriority() == highestPriorityProcessValue
-                            && readyQueue.elementAt(i).isPreempted()) {
+            if ((((readyQueue.elementAt(i).getPriority() < highestPriorityProcessValue)
+                    || (readyQueue.elementAt(i).getPriority() == highestPriorityProcessValue
+                            && readyQueue.elementAt(i).isPreempted()))
+                            && readyQueue.elementAt(i).getArrivalTime() == minArrivalTimeValue)
+                    || (readyQueue.elementAt(i).getArrivalTime() < minArrivalTimeValue)) {
                 // if (readyQueue.elementAt(i).getPriority() == highestPriorityProcessValue
                 // && readyQueue.elementAt(i).isPreempted())
                 // System.out.println("yeeeeeeeeeeeeeeeah!!!!!");
                 highestPriorityProcessIndex = i;
                 highestPriorityProcessValue = readyQueue.elementAt(i).getPriority();
+                minArrivalTimeValue = readyQueue.elementAt(i).getArrivalTime();
             }
         }
 
