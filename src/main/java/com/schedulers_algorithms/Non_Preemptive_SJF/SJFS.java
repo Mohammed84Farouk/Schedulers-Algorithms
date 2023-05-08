@@ -118,6 +118,11 @@ public class SJFS implements AlgorithmType {
     }
 
     @Override
+    public void rearrangeProcesses() {
+
+    }
+
+    @Override
     public boolean isReadyQueueEmpty() {
         return readyQueue.isEmpty();
     }

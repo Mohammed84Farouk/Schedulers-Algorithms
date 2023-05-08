@@ -25,6 +25,7 @@ public class RoundRobinScheduler implements AlgorithmType{
     @Override
     public void addProcessToReadyQueue(Process process) {
         queue1.add(process);
+        process.setInitialBurstTime(process.getBurstTime());
         numOfProcesses++;
     }
     public void setQuantum(int quantum){
@@ -33,46 +34,23 @@ public class RoundRobinScheduler implements AlgorithmType{
     }
     @Override
     public void executeProcess() {
-        if (!queue1.isEmpty()) {
-            Process currentProcess = null;
-            boolean flag=false;
-            Queue<Process> queue2 = new LinkedList<>();
-            Queue<Process> queue3 = new LinkedList<>();
-            while(!queue1.isEmpty()) {
-                if (queue1.peek().getArrivalTime() <= App.getCurrentTime()) {
-                    if(!flag) {
-                        currentProcess = queue1.peek();
-                        flag=true;
-                    }
-                    queue2.add(queue1.poll());
-                }
-                else queue3.add(queue1.poll());
-            }
-            while(!queue2.isEmpty()){
-                if(queue2.peek()!=currentProcess)  queue1.add(queue2.poll());
-                else queue2.poll();
-            }
-            assert currentProcess != null;
-            System.out.println( " burst:" + currentProcess.getBurstTime()+ " currentTime:" + App.getCurrentTime()+ " arrival:" + currentProcess.getArrivalTime());
-            if(currentProcess.getArrivalTime()>App.getCurrentTime()){
-                while(!queue3.isEmpty()) queue1.add(queue3.poll());
-                return;
-            }
-            int runTime = Math.min(timeQuantum, currentProcess.getBurstTime());
-            time += runTime;
-            currentProcess.runProcess(runTime);
-            System.out.println("Arrival:" + currentProcess.getArrivalTime() + " App Current:"+App.getCurrentTime() + " Process ID:" + currentProcess.getId() + " burst:" + currentProcess.getBurstTime());
-            if (currentProcess.isFinished()) {
-                currentProcess.setTurnAroundTime(time - currentProcess.getArrivalTime());
-                totalTurnAroundTime += currentProcess.getTurnAroundTime();
-                currentProcess.setWaitingTime(currentProcess.getTurnAroundTime() - currentProcess.getBurstTime());
-                totalWaitingTime += currentProcess.getWaitingTime();
-                System.out.println("Process " + currentProcess.getId() + " finished at time " + App.getCurrentTime() +  " burst:" + currentProcess.getBurstTime());
-            } else {
-                queue1.add(currentProcess);
-                System.out.println("Process " + currentProcess.getId() + " is executing at time " + App.getCurrentTime() + " burst:" + currentProcess.getBurstTime());
-            }
-            while(!queue3.isEmpty()) queue1.add(queue3.poll());
+        Process currentProcess = queue1.poll();
+
+        System.out.println(" burst:" + currentProcess.getBurstTime() + " currentTime:" + App.getLastTime() + " arrival:" + currentProcess.getArrivalTime());
+        int runTime = Math.min(timeQuantum, currentProcess.getBurstTime());
+        time += runTime;
+        currentProcess.runProcess(runTime);
+        System.out.println("Arrival:" + currentProcess.getArrivalTime() + " App Current:" + App.getLastTime() + " Process ID:" + currentProcess.getId() + " burst:" + currentProcess.getBurstTime());
+        if (currentProcess.isFinished()) {
+            int completionTime = App.getLastTime() + runTime;
+            currentProcess.setTurnAroundTime(completionTime - currentProcess.getArrivalTime());
+            totalTurnAroundTime += currentProcess.getTurnAroundTime();
+            currentProcess.setWaitingTime(currentProcess.getTurnAroundTime() - currentProcess.getInitialBurstTime());
+            totalWaitingTime += currentProcess.getWaitingTime();
+            System.out.println("Process " + currentProcess.getId() + " finished at time " + App.getLastTime() + " burst:" + currentProcess.getBurstTime());
+        } else {
+            queue1.add(currentProcess);
+            System.out.println("Process " + currentProcess.getId() + " is executing at time " + App.getLastTime() + " burst:" + currentProcess.getBurstTime());
         }
     }
     @Override
@@ -85,28 +63,12 @@ public class RoundRobinScheduler implements AlgorithmType{
     }
     @Override
     public Process getCPUHookedProcess() {
-        Process currentProcess = null;
-        Queue<Process> queue2 = new LinkedList<>();
-        boolean flag=false;
-        while(!queue1.isEmpty()) {
-            if (!flag && queue1.peek().getArrivalTime() <= App.getCurrentTime()) {
-                flag = true;
-                currentProcess = queue1.peek();
-                queue2.add(queue1.poll());
-            }
-            else queue2.add(queue1.poll());
-        }
-        assert currentProcess != null;
-        System.out.println("getCPUHookedProcess() "+currentProcess);
-        while(!queue2.isEmpty()){
-            queue1.add(queue2.poll());
-        }
-        return currentProcess;
+        return queue1.peek();
     }
 
     @Override
     public boolean isCPUBuzy() {
-        if (!queue1.isEmpty()) {
+        if (!queue1.isEmpty() && queue1.peek().getArrivalTime()<=App.getCurrentTime()) {
             System.out.println("isCPUBuzy() true");
             return true;
         } else {
@@ -130,6 +92,26 @@ public class RoundRobinScheduler implements AlgorithmType{
     public void checkFutureArrivalProcessesInReadyQueue() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'checkFutureArrivalProcessesInReadyQueue'");
+    }
+
+    @Override
+    public void rearrangeProcesses() {
+        Queue<Process> queue2 = new LinkedList<>();             // carries processes that have arrival time <= current time
+        Queue<Process> queue3 = new LinkedList<>();             // carries processes that have arrival time > current time
+        boolean flag=false;
+        Process currentProcess=null;
+        while (!queue1.isEmpty()) {
+            if (queue1.peek().getArrivalTime() <= App.getCurrentTime()) {
+                if (!flag) {
+                    currentProcess = queue1.poll();
+                    flag = true;
+                }
+                else queue2.add(queue1.poll());
+            } else queue3.add(queue1.poll());
+        }
+        if(currentProcess!=null) queue1.add(currentProcess);
+        while(!queue2.isEmpty()) queue1.add(queue2.poll());
+        while(!queue3.isEmpty()) queue1.add(queue3.poll());
     }
 
     @Override

@@ -221,6 +221,11 @@ public class PreemptivePriority implements AlgorithmType {
         }
     }
 
+    @Override
+    public void rearrangeProcesses() {
+
+    }
+
     private boolean hookProcessOnCPUFromReadyQueue(int currentTime) {
         if (readyQueue.size() == 0)
             return false;

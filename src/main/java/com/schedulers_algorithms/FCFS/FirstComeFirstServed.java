@@ -105,6 +105,7 @@ public class FirstComeFirstServed implements AlgorithmType {
     }
 
     private boolean hookProcessOnCPUFromReadyQueue() {
+        currentTime=App.getCurrentTime();
         if (readyQueue.size() == 0)
             return false;
 
@@ -190,6 +191,11 @@ public class FirstComeFirstServed implements AlgorithmType {
                     break;
             }
         }
+    }
+
+    @Override
+    public void rearrangeProcesses() {
+
     }
 
     @Override

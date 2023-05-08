@@ -1,6 +1,5 @@
 package com.schedulers_algorithms;
 
-import com.schedulers_algorithms.Add_Process_Dialog.AddProcessDialog;
 import com.schedulers_algorithms.Dropdown_Button.DropdownButton;
 import com.schedulers_algorithms.GanttChart.GanttChart;
 import com.schedulers_algorithms.Icons.*;
@@ -13,7 +12,6 @@ import com.schedulers_algorithms.ProcessDetailsTable.ProcessDetailsTable;
 import com.schedulers_algorithms.RRQuantumSpinBox.RRQuantumSpinBox;
 import com.schedulers_algorithms.Timer.Timer;
 import com.schedulers_algorithms.Utils.Process;
-import com.schedulers_algorithms.Utils.ProcessColor;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -121,8 +119,11 @@ public class App extends Application {
     public static int getCurrentTime() {
         return accumulativeSeconds;
     }
-
-    int processWidth = 0, lastProcessId = -1, lastTime = -1, tempRR = 0;
+    public static int getLastTime() { return lastTime; }
+    int processWidth = 0;
+    int lastProcessId = -1;
+    static int lastTime = -1;
+    int tempRR = 0;
     Color lastColor = Color.BLACK;
 
     private void handleTimelineEvent(ActionEvent event) {
@@ -130,6 +131,8 @@ public class App extends Application {
         if (algorithmType instanceof PreemptivePriority || algorithmType instanceof FirstComeFirstServed) {
             algorithmType.checkFutureArrivalProcessesInReadyQueue();
         }
+
+        if(algorithmType instanceof RoundRobinScheduler) algorithmType.rearrangeProcesses();
 
         if (!(algorithmType.isCPUBuzy()) && lastProcessId != -1) {
             Label label = new Label("P" + lastProcessId);
@@ -142,10 +145,6 @@ public class App extends Application {
             createRectangle(label);
             processWidth = 0;
             lastProcessId = algorithmType.getCPUHookedProcess().getId();
-            // if (algorithmType instanceof RoundRobinScheduler)
-            //     tempRR = Math.min(rrQuantumSpinBox.getValue(),
-            //             algorithmType.getCPUHookedProcess().getBurstTime())
-            //             - 1;
             lastTime = App.getCurrentTime() + (algorithmType instanceof SJFS ? -1 : 0);
             lastColor = algorithmType.getCPUHookedProcess().getColor();
         }
@@ -168,10 +167,7 @@ public class App extends Application {
                             - 1;
                 processWidth += 50;
             }
-            // lastProcessId = algorithmType.getCPUHookedProcess().getId();
-            // ganttChart.adjustView(); // TODO fix here
-
-        } else { // ready queue is empty and we're still counting
+        } else {                                                                            // ready queue is empty and we're still counting
             if (!(algorithmType instanceof SJFS) || App.getCurrentTime() >= 1) {
                 Rectangle rectangle = new Rectangle(50, 50);
                 rectangle.setFill(Color.TRANSPARENT);
@@ -183,7 +179,7 @@ public class App extends Application {
             }
         }
 
-        if (tempRR == 0)
+        if (tempRR == 0 && algorithmType.isCPUBuzy())
             algorithmType.executeProcess();
 
         System.out.println("currentTime from app: " + App.getCurrentTime());
@@ -363,15 +359,15 @@ public class App extends Application {
 
         ///*
         // Non Preemptive Priority Testcases
-        // Process process1 = new Process(0, 0, 5,1, Color.rgb(135, 206, 250));
+//        Process process1 = new Process(0, 0, 5,1, Color.rgb(135, 206, 250));
 
-        Process process2 = new Process(1, 0, 4,4, Color.rgb(135, 206, 250));
+        Process process2 = new Process(1, 0, 5,4, Color.rgb(135, 206, 250));
         Process process3 = new Process(2, 1, 3,3, Color.rgb(135, 206, 250));
         Process process4 = new Process(3, 2, 1,2, Color.rgb(135, 206, 250));
         Process process5 = new Process(4, 3, 2,1, Color.rgb(135, 206, 250));
-        // Process process6 = new Process(5, 5, 4,0, Color.rgb(135, 206, 250));
+        Process process6 = new Process(5, 4, 3,0, Color.rgb(135, 206, 250));
 
-        // Process process7 = new Process(6,0, 3,1, Color.rgb(135, 206, 250));
+//         Process process7 = new Process(6,0, 3,1, Color.rgb(135, 206, 250));
 
         // Process process8 = new Process(7, 0, 2,1, Color.rgb(135, 206, 250));
         // Process process9 = new Process(8, 5, 3,1, Color.rgb(135, 206, 250));
@@ -386,9 +382,9 @@ public class App extends Application {
         processDetailsTable.addProcess(currentSchedulerAlgorithm, process2);
         processDetailsTable.addProcess(currentSchedulerAlgorithm, process3);
         processDetailsTable.addProcess(currentSchedulerAlgorithm, process4);
-
+//
         processDetailsTable.addProcess(currentSchedulerAlgorithm, process5);
-        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process6);
+        processDetailsTable.addProcess(currentSchedulerAlgorithm, process6);
         // processDetailsTable.addProcess(currentSchedulerAlgorithm, process7);
 
         // processDetailsTable.addProcess(currentSchedulerAlgorithm, process8);
@@ -406,7 +402,7 @@ public class App extends Application {
         algorithmType.addProcessToReadyQueue(process4);
 
         algorithmType.addProcessToReadyQueue(process5);
-        // algorithmType.addProcessToReadyQueue(process6);
+        algorithmType.addProcessToReadyQueue(process6);
         // algorithmType.addProcessToReadyQueue(process7);
 
         // algorithmType.addProcessToReadyQueue(process8);

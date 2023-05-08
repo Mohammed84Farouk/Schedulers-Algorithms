@@ -7,6 +7,7 @@ public class Process {
 
 	private int id;
     private int arrivalTime;
+    private int initialBurstTime;
     private int burstTime;
     private int priority;
     private int waitingTime=0;
@@ -87,10 +88,9 @@ public class Process {
         return this.waitingTime;
     }
 
-    public void setTurnAroundTime(int turnAroundTime) {
-        this.turnAroundTime = turnAroundTime;
-
-    }
+    public void setTurnAroundTime(int turnAroundTime) { this.turnAroundTime = turnAroundTime; }
+    public void setInitialBurstTime(int initialTime) { this.initialBurstTime = initialTime; }
+    public int getInitialBurstTime() { return this.initialBurstTime; }
     public int getTurnAroundTime() {
         return this.turnAroundTime;
     }

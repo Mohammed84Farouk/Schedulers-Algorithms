@@ -10,4 +10,5 @@ public interface AlgorithmType {
     public double getAverageWaitingTime();
     public double getAverageTurnaroundTime();
     public void checkFutureArrivalProcessesInReadyQueue();
+    public void rearrangeProcesses();
 }
