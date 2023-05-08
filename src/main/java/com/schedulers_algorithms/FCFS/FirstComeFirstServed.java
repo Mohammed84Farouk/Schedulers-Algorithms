@@ -10,9 +10,10 @@ import com.schedulers_algorithms.Utils.Process;
 
 public class FirstComeFirstServed implements AlgorithmType {
     private CPU cpu;
-
+    private int numProcesses=0;
     private Vector<Process> readyQueue;
     private int currentTime = 0;
+    private double totalTurnAroundTime, totalWaitingTime;
 
     public CPU getCpu() {
         return cpu;
@@ -50,6 +51,8 @@ public class FirstComeFirstServed implements AlgorithmType {
 
     @Override
     public void addProcessToReadyQueue(Process process) {
+        numProcesses++;
+        process.setInitialBurstTime(process.getBurstTime());
         // currentTime = App.getCurrentTime();
         switch (cpu.getState()) {
             case IDLE:
@@ -93,10 +96,11 @@ public class FirstComeFirstServed implements AlgorithmType {
         cpu.getHookedProcess().setWaitingTime(cpu.getHookedProcess().getWaitingTime() - 1);
 
         if (cpu.getHookedProcess().isFinished()) {
-            cpu.getHookedProcess().setTurnAroundTime(currentTime - cpu.getHookedProcess().getArrivalTime() + 1);
-            // totalTurnaroundTime += currentTime - cpu.getHookedProcess().getArrivalTime()
-            // + 1;
-            // totalWaitingTime += cpu.getHookedProcess().getTurnAroundTime() +
+            int completionTime = App.getLastTime() + getCPUHookedProcess().getInitialBurstTime();
+            cpu.getHookedProcess().setTurnAroundTime(completionTime - cpu.getHookedProcess().getArrivalTime());
+            totalTurnAroundTime += cpu.getHookedProcess().getTurnAroundTime();
+            cpu.getHookedProcess().setWaitingTime(cpu.getHookedProcess().getTurnAroundTime() - cpu.getHookedProcess().getInitialBurstTime());
+            totalWaitingTime += cpu.getHookedProcess().getWaitingTime();
             // cpu.getHookedProcess().getWaitingTime();
             cpu.switchState(CPUState.IDLE);
             cpu.unHookProcess();
@@ -131,32 +135,12 @@ public class FirstComeFirstServed implements AlgorithmType {
     }
 
     public double getAverageWaitingTime() {
-        int totalWaitingTime = 0;
-        int numProcesses = 0;
-        for (Process p : queue1) {
-            totalWaitingTime += p.getWaitingTime();
-            numProcesses++;
-        }
-        for (Process p : queue2) {
-            totalWaitingTime += p.getWaitingTime();
-            numProcesses++;
-        }
-        return (double) totalWaitingTime / numProcesses;
+        return totalWaitingTime / (double) numProcesses;
     }
 
     @Override
     public double getAverageTurnaroundTime() {
-        int totalTurnaroundTime = 0;
-        int numProcesses = 0;
-        for (Process p : queue1) {
-            totalTurnaroundTime += p.getTurnAroundTime();
-            numProcesses++;
-        }
-        for (Process p : queue2) {
-            totalTurnaroundTime += p.getTurnAroundTime();
-            numProcesses++;
-        }
-        return (double) totalTurnaroundTime / numProcesses;
+        return totalTurnAroundTime / (double) numProcesses;
     }
 
     @Override

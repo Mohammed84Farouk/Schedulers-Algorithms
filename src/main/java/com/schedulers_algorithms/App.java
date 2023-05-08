@@ -1,5 +1,6 @@
 package com.schedulers_algorithms;
 
+import com.schedulers_algorithms.Add_Process_Dialog.AddProcessDialog;
 import com.schedulers_algorithms.Dropdown_Button.DropdownButton;
 import com.schedulers_algorithms.GanttChart.GanttChart;
 import com.schedulers_algorithms.Icons.*;
@@ -12,6 +13,7 @@ import com.schedulers_algorithms.ProcessDetailsTable.ProcessDetailsTable;
 import com.schedulers_algorithms.RRQuantumSpinBox.RRQuantumSpinBox;
 import com.schedulers_algorithms.Timer.Timer;
 import com.schedulers_algorithms.Utils.Process;
+import com.schedulers_algorithms.Utils.ProcessColor;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -299,54 +301,54 @@ public class App extends Application {
         if (currentSchedulerState == SchedulerState.RUNNING)
             timeline.pause();
 
-        // BooleanWrapper isSaved = new BooleanWrapper(false);
+         BooleanWrapper isSaved = new BooleanWrapper(false);
 
-        // StringWrapper processPriority = new StringWrapper();
-        // StringWrapper processBurst = new StringWrapper();
-        // ProcessColor processColor = new ProcessColor(Color.RED);
-        // BooleanWrapper isFutureProcess = new BooleanWrapper(false);
-        // StringWrapper processArrival = new StringWrapper();
-        // AddProcessDialog addProcessDialog = new
-        // AddProcessDialog(currentSchedulerAlgorithm, isSaved, processPriority,
-        // processBurst, processColor,
-        // isFutureProcess, processArrival);
+         StringWrapper processPriority = new StringWrapper();
+         StringWrapper processBurst = new StringWrapper();
+         ProcessColor processColor = new ProcessColor(Color.RED);
+         BooleanWrapper isFutureProcess = new BooleanWrapper(false);
+         StringWrapper processArrival = new StringWrapper();
+         AddProcessDialog addProcessDialog = new
+         AddProcessDialog(currentSchedulerAlgorithm, isSaved, processPriority,
+         processBurst, processColor,
+         isFutureProcess, processArrival);
 
-        // addProcessDialog.showDialog();
+         addProcessDialog.showDialog();
 
-        // if (!(isSaved.value)) {
-        // return;
-        // }
+         if (!(isSaved.value)) {
+         return;
+         }
 
-        // int priority, burst;
+         int priority, burst;
 
-        // burst = Integer.parseInt(processBurst.value);
+         burst = Integer.parseInt(processBurst.value);
 
-        // Process process;
+         Process process;
 
-        // if (currentSchedulerAlgorithm == SchedulerAlgorithm.PREEMPTIVE_PRIORITY
-        // || currentSchedulerAlgorithm == SchedulerAlgorithm.NON_PREEMPTIVE_PRIORITY) {
+         if (currentSchedulerAlgorithm == SchedulerAlgorithm.PREEMPTIVE_PRIORITY
+         || currentSchedulerAlgorithm == SchedulerAlgorithm.NON_PREEMPTIVE_PRIORITY) {
 
-        // priority = Integer.parseInt(processPriority.value);
+         priority = Integer.parseInt(processPriority.value);
 
-        // process = new Process(
-        // ++processesIdTracker,
-        // (isFutureProcess.value) ? Integer.parseInt(processArrival.value) :
-        // App.getCurrentTime(),
-        // burst,
-        // priority,
-        // processColor.getColor());
-        // } else {
-        // process = new Process(
-        // ++processesIdTracker,
-        // (isFutureProcess.value) ? Integer.parseInt(processArrival.value) :
-        // App.getCurrentTime(),
-        // burst,
-        // processColor.getColor());
-        // }
+         process = new Process(
+         ++processesIdTracker,
+         (isFutureProcess.value) ? Integer.parseInt(processArrival.value) :
+         App.getCurrentTime(),
+         burst,
+         priority,
+         processColor.getColor());
+         } else {
+         process = new Process(
+         ++processesIdTracker,
+         (isFutureProcess.value) ? Integer.parseInt(processArrival.value) :
+         App.getCurrentTime(),
+         burst,
+         processColor.getColor());
+         }
 
-        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process);
+         processDetailsTable.addProcess(currentSchedulerAlgorithm, process);
 
-        // algorithmType.addProcessToReadyQueue(process);
+         algorithmType.addProcessToReadyQueue(process);
 
         // processDetailsTable.addProcess(currentSchedulerAlgorithm, new Process(0, 0,
         // 3, Color.rgb(135, 206, 250)));
@@ -361,48 +363,48 @@ public class App extends Application {
         // Non Preemptive Priority Testcases
 //        Process process1 = new Process(0, 0, 5,1, Color.rgb(135, 206, 250));
 
-        Process process2 = new Process(1, 0, 5,4, Color.rgb(135, 206, 250));
-        Process process3 = new Process(2, 1, 3,3, Color.rgb(135, 206, 250));
-        Process process4 = new Process(3, 2, 1,2, Color.rgb(135, 206, 250));
-        Process process5 = new Process(4, 3, 2,1, Color.rgb(135, 206, 250));
-        Process process6 = new Process(5, 4, 3,0, Color.rgb(135, 206, 250));
-
-//         Process process7 = new Process(6,0, 3,1, Color.rgb(135, 206, 250));
-
-        // Process process8 = new Process(7, 0, 2,1, Color.rgb(135, 206, 250));
-        // Process process9 = new Process(8, 5, 3,1, Color.rgb(135, 206, 250));
-        // Process process10 = new Process(9, 6, 4,1, Color.rgb(135, 206, 250));
-
-        // Process process11 = new Process(10, 0, 3,3, Color.rgb(135, 206, 250));
-        // Process process12 = new Process(11, 1, 3,2, Color.rgb(135, 206, 250));
-        // Process process13 = new Process(12, 2, 3,1, Color.rgb(135, 206, 250));
-
-        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process1);
-
-        processDetailsTable.addProcess(currentSchedulerAlgorithm, process2);
-        processDetailsTable.addProcess(currentSchedulerAlgorithm, process3);
-        processDetailsTable.addProcess(currentSchedulerAlgorithm, process4);
+//        Process process2 = new Process(1, 1000, 5,4, Color.rgb(135, 206, 250));
+//        Process process3 = new Process(2, 6, 4,3, Color.rgb(135, 206, 250));
+//        Process process4 = new Process(3, 0, 3,2, Color.rgb(135, 206, 250));
+//        Process process5 = new Process(4, 6, 2,1, Color.rgb(135, 206, 250));
+//        Process process6 = new Process(5, 5, 4,0, Color.rgb(135, 206, 250));
 //
-        processDetailsTable.addProcess(currentSchedulerAlgorithm, process5);
-        processDetailsTable.addProcess(currentSchedulerAlgorithm, process6);
-        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process7);
-
-        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process8);
-        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process9);
-        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process10);
-
-        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process11);
-        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process12);
-        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process13);
-
-        // algorithmType.addProcessToReadyQueue(process1);
-
-        algorithmType.addProcessToReadyQueue(process2);
-        algorithmType.addProcessToReadyQueue(process3);
-        algorithmType.addProcessToReadyQueue(process4);
-
-        algorithmType.addProcessToReadyQueue(process5);
-        algorithmType.addProcessToReadyQueue(process6);
+////         Process process7 = new Process(6,0, 3,1, Color.rgb(135, 206, 250));
+//
+//        // Process process8 = new Process(7, 0, 2,1, Color.rgb(135, 206, 250));
+//        // Process process9 = new Process(8, 5, 3,1, Color.rgb(135, 206, 250));
+//        // Process process10 = new Process(9, 6, 4,1, Color.rgb(135, 206, 250));
+//
+//        // Process process11 = new Process(10, 0, 3,3, Color.rgb(135, 206, 250));
+//        // Process process12 = new Process(11, 1, 3,2, Color.rgb(135, 206, 250));
+//        // Process process13 = new Process(12, 2, 3,1, Color.rgb(135, 206, 250));
+//
+//        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process1);
+//
+//        processDetailsTable.addProcess(currentSchedulerAlgorithm, process2);
+//        processDetailsTable.addProcess(currentSchedulerAlgorithm, process3);
+//        processDetailsTable.addProcess(currentSchedulerAlgorithm, process4);
+////
+//        processDetailsTable.addProcess(currentSchedulerAlgorithm, process5);
+//        processDetailsTable.addProcess(currentSchedulerAlgorithm, process6);
+//        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process7);
+//
+//        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process8);
+//        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process9);
+//        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process10);
+//
+//        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process11);
+//        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process12);
+//        // processDetailsTable.addProcess(currentSchedulerAlgorithm, process13);
+//
+//        // algorithmType.addProcessToReadyQueue(process1);
+//
+//        algorithmType.addProcessToReadyQueue(process2);
+//        algorithmType.addProcessToReadyQueue(process3);
+//        algorithmType.addProcessToReadyQueue(process4);
+//
+//        algorithmType.addProcessToReadyQueue(process5);
+//        algorithmType.addProcessToReadyQueue(process6);
         // algorithmType.addProcessToReadyQueue(process7);
 
         // algorithmType.addProcessToReadyQueue(process8);
